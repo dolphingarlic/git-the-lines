@@ -10,9 +10,7 @@ import base64
 
 import requests
 import discord
-from pygments.lexers import get_all_lexers
-
-LANGUAGES = [item[1][0] for item in get_all_lexers() if item[1]]
+from pygments.lexers import guess_lexer_for_filename
 
 client = discord.Client()
 
@@ -30,15 +28,13 @@ async def on_message(message):
         repo = '/'.join(query[:2])
         branch = query[3]
         file_path = '/'.join(query[4:])
-        language = file_path[file_path.rfind('.') + 1:]
-
-        if language not in LANGUAGES:
-            language = ''
 
         response_json = requests.get(
             f'https://api.github.com/repos/{repo}/contents/{file_path}?ref={branch}').json()
         file_contents = base64.b64decode(
             response_json['content']).decode('utf-8')
+
+        language = guess_lexer_for_filename(query[-1], file_contents).aliases[0]
 
         if '-' in lines:
             lines = lines.split('-')
@@ -50,6 +46,7 @@ async def on_message(message):
         split_file_contents = file_contents.split('\n')
         required = '\n'.join(split_file_contents[start_line:end_line + 1])
 
+        await message.edit(suppress=True)
         await message.channel.send(f'```{language}\n{required}```')
 
 
