@@ -23,7 +23,7 @@ async def on_message(message):
     Checks if the message starts is a GitHub snippet, then removes the embed, then sends the snippet in Discord
     '''
 
-    match = re.search(message.content)
+    match = pattern.search(message.content)
     if match:
         response_json = requests.get(
             f'https://api.github.com/repos/{match.group(1)}/contents/{match.group(3)}.{match.group(4)}?ref={match.group(2)}').json()
