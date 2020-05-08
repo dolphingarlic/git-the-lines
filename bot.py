@@ -14,6 +14,8 @@ import discord
 
 client = discord.Client()
 
+pattern = re.compile(r'https:\/\/github\.com\/(.+)\/blob\/(.+?)\/(.+?)\.(.+)#L([0-9]+)(-L([0-9]+))*')
+
 
 @client.event
 async def on_message(message):
@@ -21,8 +23,7 @@ async def on_message(message):
     Checks if the message starts is a GitHub snippet, then removes the embed, then sends the snippet in Discord
     '''
 
-    match = re.match(
-        r'https:\/\/github\.com\/(.+)\/blob\/(.+?)\/(.+?)\.(.+)#L([0-9]+)(-L([0-9]+))*', message.content)
+    match = re.search(message.content)
     if match:
         response_json = requests.get(
             f'https://api.github.com/repos/{match.group(1)}/contents/{match.group(3)}.{match.group(4)}?ref={match.group(2)}').json()
@@ -42,10 +43,11 @@ async def on_message(message):
         while all(line.startswith('\t') for line in required) or all(line.startswith(' ') for line in required):
             required = list(map(lambda line: line[1:], required))
 
-        required = '\n'.join(required)
+        required = '\n'.join(required).rstrip()
 
         await message.edit(suppress=True)
-        await message.channel.send(f'```{match.group(4)}\n{required}\n```')
+        if (len(required) != 0):
+            await message.channel.send(f'```{match.group(4)}\n{required}\n```')
 
 
 @client.event
