@@ -15,7 +15,8 @@ import discord
 client = discord.Client()
 
 pattern = re.compile(
-    r'https:\/\/github\.com\/(.+)\/blob\/(.+?)\/(.+?)(\.(.+))*#L([0-9]+)(-L([0-9]+))*')
+    r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/(?P<file_path>.+?)(?P<extension>\.(?P<language>.+))*#L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
+)
 
 
 @client.event
@@ -26,16 +27,19 @@ async def on_message(message):
 
     match = pattern.search(message.content)
     if match and message.author.id != client.user.id:
+        d = match.groupdict()
         response_json = requests.get(
-            f'https://api.github.com/repos/{match.group(1)}/contents/{match.group(3)}{match.group(4) if match.group(4) else ""}?ref={match.group(2)}').json()
+            f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}' +
+            f'{d["extension"] if d["extension"] else None}?ref={d["branch"]}'
+        ).json()
         file_contents = base64.b64decode(
             response_json['content']).decode('utf-8')
 
-        if match.group(7):
-            start_line = int(match.group(6))
-            end_line = int(match.group(8))
+        if d['end_line']:
+            start_line = int(d['start_line'])
+            end_line = int(d['end_line'])
         else:
-            start_line = end_line = int(match.group(6))
+            start_line = end_line = int(d['start_line'])
 
         split_file_contents = file_contents.split('\n')
 
@@ -48,7 +52,7 @@ async def on_message(message):
 
         await message.edit(suppress=True)
         if (len(required) != 0):
-            await message.channel.send(f'```{match.group(5)}\n{required}```')
+            await message.channel.send(f'```{d["language"]}\n{required}```')
 
 
 @client.event
