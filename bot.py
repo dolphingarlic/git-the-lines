@@ -15,10 +15,6 @@ from pygments.lexers import guess_lexer_for_filename
 client = discord.Client()
 
 
-def remove_one_tab(s):
-    return s[1:]
-
-
 @client.event
 async def on_message(message):
     if message.content.startswith('https://github.com/') and '#L' in message.content:
@@ -51,8 +47,8 @@ async def on_message(message):
         required = split_file_contents[start_line:end_line + 1]
 
         while all(line.startswith('\t') for line in required) or all(line.startswith(' ') for line in required):
-            required = list(map(remove_one_tab, required))
-        
+            required = list(map(lambda line: line[1:], required))
+
         required = '\n'.join(required)
 
         await message.edit(suppress=True)
