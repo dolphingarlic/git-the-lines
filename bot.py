@@ -10,6 +10,9 @@ import base64
 
 import requests
 import discord
+from pygments.lexers import get_all_lexers
+
+LANGUAGES = [item[1][0] for item in get_all_lexers() if item[1]]
 
 client = discord.Client()
 
@@ -18,7 +21,7 @@ client = discord.Client()
 
 @client.event
 async def on_message(message):
-    if message.content.startswith('https://github.com/'):
+    if message.content.startswith('https://github.com/') and '#L' in message.content:
         url = message.content.replace('https://github.com/', '')
         lines = url[url.rfind('#'):]
         url = url.replace(lines, '')
@@ -29,9 +32,13 @@ async def on_message(message):
         file_path = '/'.join(query[4:])
         language = file_path[file_path.rfind('.') + 1:]
 
+        if language not in LANGUAGES:
+            language = ''
+
         response_json = requests.get(
             f'https://api.github.com/repos/{repo}/contents/{file_path}?ref={branch}').json()
-        file_contents = base64.b64decode(response_json['content']).decode('utf-8')
+        file_contents = base64.b64decode(
+            response_json['content']).decode('utf-8')
 
         if '-' in lines:
             lines = lines.split('-')
@@ -39,7 +46,7 @@ async def on_message(message):
             end_line = int(lines[1][lines[1].find('L') + 1:]) - 1
         else:
             start_line = end_line = int(lines[lines.find('L') + 1:]) - 1
-        
+
         split_file_contents = file_contents.split('\n')
         required = '\n'.join(split_file_contents[start_line:end_line + 1])
 
