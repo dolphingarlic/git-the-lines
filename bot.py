@@ -25,7 +25,7 @@ async def on_message(message):
     '''
 
     match = pattern.search(message.content)
-    if match:
+    if match and message.author.id != client.user.id:
         response_json = requests.get(
             f'https://api.github.com/repos/{match.group(1)}/contents/{match.group(3)}{match.group(4) if match.group(4) else ""}?ref={match.group(2)}').json()
         file_contents = base64.b64decode(
@@ -48,7 +48,7 @@ async def on_message(message):
 
         await message.edit(suppress=True)
         if (len(required) != 0):
-            await message.channel.send(f'```{match.group(5)}\n{required}\n```')
+            await message.channel.send(f'```{match.group(5)}\n{required}```')
 
 
 @client.event
