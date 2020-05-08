@@ -14,7 +14,8 @@ import discord
 
 client = discord.Client()
 
-pattern = re.compile(r'https:\/\/github\.com\/(.+)\/blob\/(.+?)\/(.+?)(\.(.+))#L([0-9]+)(-L([0-9]+))*')
+pattern = re.compile(
+    r'https:\/\/github\.com\/(.+)\/blob\/(.+?)\/(.+?)(\.(.+))*#L([0-9]+)(-L([0-9]+))*')
 
 
 @client.event
@@ -26,7 +27,7 @@ async def on_message(message):
     match = pattern.search(message.content)
     if match:
         response_json = requests.get(
-            f'https://api.github.com/repos/{match.group(1)}/contents/{match.group(3)}{match.group(4)}?ref={match.group(2)}').json()
+            f'https://api.github.com/repos/{match.group(1)}/contents/{match.group(3)}{match.group(4) if match.group(4) else ""}?ref={match.group(2)}').json()
         file_contents = base64.b64decode(
             response_json['content']).decode('utf-8')
 
