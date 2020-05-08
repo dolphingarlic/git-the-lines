@@ -16,9 +16,7 @@ client = discord.Client()
 
 
 def remove_one_tab(s):
-    if s.startswith('\t'):
-        return s[1:]
-    return s[4:]
+    return s[1:]
 
 
 @client.event
@@ -52,7 +50,7 @@ async def on_message(message):
 
         required = split_file_contents[start_line:end_line + 1]
 
-        while all(line.startswith('\t') for line in required) or all(line.startswith('    ') for line in required):
+        while all(line.startswith('\t') for line in required) or all(line.startswith(' ') for line in required):
             required = list(map(remove_one_tab, required))
         
         required = '\n'.join(required)
