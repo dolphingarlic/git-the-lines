@@ -44,7 +44,7 @@ async def on_message(message):
         while all(line.startswith('\t') for line in required) or all(line.startswith(' ') for line in required):
             required = list(map(lambda line: line[1:], required))
 
-        required = '\n'.join(required).rstrip()
+        required = '\n'.join(required).rstrip().replace('`', '\`')
 
         await message.edit(suppress=True)
         if (len(required) != 0):
