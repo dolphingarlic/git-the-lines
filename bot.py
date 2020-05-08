@@ -1,5 +1,5 @@
 '''
-git-the-lines
+Git the lines
 
 A Discord bot that removes embeds and prints out specific lines of code
 when a GitHub link is sent
@@ -14,7 +14,11 @@ from pygments.lexers import guess_lexer_for_filename
 
 client = discord.Client()
 
-# https://github.com/SwagLyrics/SwagLyrics-For-Spotify/blob/master/swaglyrics/cli.py#L85-L86
+
+def remove_one_tab(s):
+    if s.startswith('\t'):
+        return s[1:]
+    return s[4:]
 
 
 @client.event
@@ -34,7 +38,8 @@ async def on_message(message):
         file_contents = base64.b64decode(
             response_json['content']).decode('utf-8')
 
-        language = guess_lexer_for_filename(query[-1], file_contents).aliases[0]
+        language = guess_lexer_for_filename(
+            query[-1], file_contents).aliases[0]
 
         if '-' in lines:
             lines = lines.split('-')
@@ -44,7 +49,13 @@ async def on_message(message):
             start_line = end_line = int(lines[lines.find('L') + 1:]) - 1
 
         split_file_contents = file_contents.split('\n')
-        required = '\n'.join(split_file_contents[start_line:end_line + 1])
+
+        required = split_file_contents[start_line:end_line + 1]
+
+        while all(line.startswith('\t') for line in required) or all(line.startswith('    ') for line in required):
+            required = list(map(remove_one_tab, required))
+        
+        required = '\n'.join(required)
 
         await message.edit(suppress=True)
         await message.channel.send(f'```{language}\n{required}```')
