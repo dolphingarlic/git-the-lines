@@ -7,40 +7,33 @@ when a GitHub link is sent
 
 import os
 import base64
+import re
 
 import requests
 import discord
-from pygments.lexers import guess_lexer_for_filename
 
 client = discord.Client()
 
 
 @client.event
 async def on_message(message):
-    if message.content.startswith('https://github.com/') and '#L' in message.content:
-        url = message.content.replace('https://github.com/', '')
-        lines = url[url.rfind('#'):]
-        url = url.replace(lines, '')
+    '''
+    Checks if the message starts is a GitHub snippet, then removes the embed, then sends the snippet in Discord
+    '''
 
-        query = url.split('/')
-        repo = '/'.join(query[:2])
-        branch = query[3]
-        file_path = '/'.join(query[4:])
-
+    match = re.match(
+        r'https:\/\/github\.com\/(.+)\/blob\/(.+?)\/(.+?)\.(.+)#L([0-9]+)(-L([0-9]+))*', message.content)
+    if match:
         response_json = requests.get(
-            f'https://api.github.com/repos/{repo}/contents/{file_path}?ref={branch}').json()
+            f'https://api.github.com/repos/{match.group(1)}/contents/{match.group(3)}.{match.group(4)}?ref={match.group(2)}').json()
         file_contents = base64.b64decode(
             response_json['content']).decode('utf-8')
 
-        language = guess_lexer_for_filename(
-            query[-1], file_contents).aliases[0]
-
-        if '-' in lines:
-            lines = lines.split('-')
-            start_line = int(lines[0][lines[0].find('L') + 1:]) - 1
-            end_line = int(lines[1][lines[1].find('L') + 1:]) - 1
+        if match.group(6):
+            start_line = int(match.group(5))
+            end_line = int(match.group(7))
         else:
-            start_line = end_line = int(lines[lines.find('L') + 1:]) - 1
+            start_line = end_line = int(match.group(5))
 
         split_file_contents = file_contents.split('\n')
 
@@ -52,7 +45,7 @@ async def on_message(message):
         required = '\n'.join(required)
 
         await message.edit(suppress=True)
-        await message.channel.send(f'```{language}\n{required}```')
+        await message.channel.send(f'```{match.group(4)}\n{required}\n```')
 
 
 @client.event

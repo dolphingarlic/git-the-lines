@@ -9,7 +9,6 @@ autopep8 = "*"
 [packages]
 discord-py = "*"
 requests = "*"
-pygments = "*"
 
 [requires]
 python_version = "3.7"
