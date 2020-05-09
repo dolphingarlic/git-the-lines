@@ -14,9 +14,14 @@ import discord
 
 client = discord.Client()
 
-pattern = re.compile(
+github = re.compile(
     r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/(?P<file_path>.+?)' +
     r'(?P<extension>\.(?P<language>.+))*#L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
+)
+
+gitlab = re.compile(
+    r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+)\/(?P<file_path>.+?)' +
+    r'(?P<extension>\.(?P<language>.+))*#L(?P<start_line>[0-9]+)(-(?P<end_line>[0-9]+))*'
 )
 
 
@@ -27,13 +32,25 @@ async def on_message(message):
     then sends the snippet in Discord
     '''
 
-    match = pattern.search(message.content)
-    if match and message.author.id != client.user.id:
-        d = match.groupdict()
-        response_json = requests.get(
-            f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}' +
-            f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}'
-        ).json()
+    gh_match = github.search(message.content)
+    gl_match = gitlab.search(message.content)
+    if (gh_match or gl_match) and message.author.id != client.user.id:
+        if gh_match:
+            d = gh_match.groupdict()
+            response_json = requests.get(
+                f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}' +
+                f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}',
+                headers={'Accept': 'application/vnd.github.v3+json'}
+            ).json()
+        else:
+            d = gl_match.groupdict()
+            for x in d:
+                d[x] = d[x].replace('/', '%2F').replace('.', '%2E')
+            response_json = requests.get(
+                f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}' +
+                f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}'
+            ).json()
+
         file_contents = base64.b64decode(
             response_json['content']).decode('utf-8')
 
