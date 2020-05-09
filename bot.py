@@ -45,7 +45,8 @@ async def on_message(message):
         else:
             d = gl_match.groupdict()
             for x in d:
-                d[x] = d[x].replace('/', '%2F').replace('.', '%2E')
+                if d[x]:
+                    d[x] = d[x].replace('/', '%2F').replace('.', '%2E')
             response_json = requests.get(
                 f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}' +
                 f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}'
