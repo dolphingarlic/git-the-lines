@@ -10,9 +10,9 @@ import base64
 import re
 
 import requests
-import discord
+from discord.ext import commands
 
-client = discord.Client()
+bot = commands.Bot(';')
 
 github = re.compile(
     r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/(?P<file_path>.+?)' +
@@ -25,7 +25,30 @@ gitlab = re.compile(
 )
 
 
-@client.event
+@bot.command()
+async def about(ctx):
+    '''
+    Describes the bot
+    '''
+
+    await ctx.message.channel.send(
+        'Hi there! I\'m Git the lines. Simply send a GitHub ' +
+        'or GitLab snippet and I\'ll send the code to Discord.'
+    )
+
+
+@bot.command()
+async def invite(ctx):
+    '''
+    Sends a bot invite link
+    '''
+
+    await ctx.message.channel.send(
+        'https://discord.com/api/oauth2/authorize?client_id=708364985021104198&permissions=75776&scope=bot'
+    )
+
+
+@bot.event
 async def on_message(message):
     '''
     Checks if the message starts is a GitHub snippet, then removes the embed,
@@ -34,7 +57,7 @@ async def on_message(message):
 
     gh_match = github.search(message.content)
     gl_match = gitlab.search(message.content)
-    if (gh_match or gl_match) and message.author.id != client.user.id:
+    if (gh_match or gl_match) and message.author.id != bot.user.id:
         if gh_match:
             d = gh_match.groupdict()
             response_json = requests.get(
@@ -75,14 +98,17 @@ async def on_message(message):
         else:
             await message.channel.send('``` ```')
         await message.edit(suppress=True)
+    else:
+        await bot.process_commands(message)
 
 
-@client.event
+@bot.event
 async def on_ready():
     '''
     Just prints when the bot is ready
     '''
 
-    print(f'{client.user} has connected to Discord!')
+    print(f'{bot.user} has connected to Discord!')
 
-client.run(os.environ['DISCORD_TOKEN'])
+
+bot.run(os.environ['DISCORD_TOKEN'])
