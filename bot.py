@@ -52,11 +52,11 @@ async def on_message(message):
 
         required = '\n'.join(required).rstrip().replace('`', r'\`')
 
-        await message.edit(suppress=True)
         if len(required) != 0:
             await message.channel.send(f'```{d["language"]}\n{required}```')
         else:
             await message.channel.send('``` ```')
+        await message.edit(suppress=True)
 
 
 @client.event
