@@ -8,11 +8,16 @@ when a GitHub link is sent
 import os
 import base64
 import re
+from datetime import datetime
 
 import requests
+import discord
 from discord.ext import commands
 
 bot = commands.Bot(';')
+bot.remove_command('help')
+
+start_time = None
 
 github = re.compile(
     r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/(?P<file_path>.+?)' +
@@ -27,14 +32,76 @@ gitlab = re.compile(
 
 @bot.command()
 async def about(ctx):
-    '''
-    Describes the bot
-    '''
+    info = await bot.application_info()
+    embed = discord.Embed(
+        title=f'{info.name}',
+        description=f'{info.description}',
+        colour=0x1aaae5,
 
-    await ctx.message.channel.send(
-        'Hi there! I\'m Git the lines. Simply send a GitHub ' +
-        'or GitLab snippet and I\'ll send the code to Discord.'
+    ).set_thumbnail(
+        url=info.icon_url
+    ).add_field(
+        name='**__Info__**',
+        value='\u200b',
+        inline=False
+    ).add_field(
+        name='Guild Count',
+        value=len(bot.guilds),
+        inline=True
+    ).add_field(
+        name='User Count',
+        value=len(bot.users),
+        inline=True
+    ).add_field(
+        name='Uptime',
+        value=f'{datetime.now() - start_time}',
+        inline=True
+    ).add_field(
+        name='Latency',
+        value=f'{round(bot.latency, 2)}ms',
+        inline=True
+    ).set_footer(text=f'Made by {info.owner}', icon_url=info.owner.avatar_url)
+
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def stats(ctx):
+    await about(ctx)
+
+
+@bot.command()
+async def help(ctx):
+    info = await bot.application_info()
+    embed = discord.Embed(
+        title='Help',
+        description='Just send the link to the snippet - no need for extra commands! *Git the lines* even highlights the code for you',
+        colour=0x41c03f
+    ).set_thumbnail(
+        url=info.icon_url
+    ).add_field(
+        name='**__Commands__**',
+        value='\u200b',
+        inline=False
+    ).add_field(
+        name='`;about`',
+        value='About *Git the lines*',
+        inline=True
+    ).add_field(
+        name='`;invite` or `;topgg`',
+        value='Bot invite link',
+        inline=True
+    ).add_field(
+        name='`;help`',
+        value='Shows this message',
+        inline=True
+    ).add_field(
+        name='`;ping`',
+        value='Check the bot\'s latency',
+        inline=True
     )
+
+    await ctx.send(embed=embed)
 
 
 @bot.command()
@@ -43,10 +110,25 @@ async def invite(ctx):
     Sends a bot invite link
     '''
 
-    await ctx.message.channel.send(
-        'https://discord.com/api/oauth2/authorize?client_id=708364985021104198&permissions=75776&scope=bot'
-    )
+    try:
+        invite = await bot.fetch_invite(url='https://top.gg/bot/708364985021104198')
+        await ctx.send(invite)
+    except:
+        await ctx.send('https://discord.com/api/oauth2/authorize?client_id=708364985021104198&permissions=75776&scope=bot')
 
+
+@bot.command()
+async def topgg(ctx):
+    '''
+    Sends a bot invite link
+    '''
+
+    await invite(ctx)
+
+
+@bot.command()
+async def ping(ctx):
+    await ctx.send(f'Pong! {round(bot.latency, 2)}ms')
 
 @bot.event
 async def on_message(message):
@@ -108,6 +190,10 @@ async def on_ready():
     Just prints when the bot is ready
     '''
 
+    global start_time
+    start_time = datetime.now()
+
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='for snippet links'))
     print(f'{bot.user} has connected to Discord!')
 
 
