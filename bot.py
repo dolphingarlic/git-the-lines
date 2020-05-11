@@ -2,7 +2,7 @@
 Git the lines
 
 A Discord bot that removes embeds and prints out specific lines of code
-when a GitHub link is sent
+when a GitHub or GitLab link is sent
 '''
 
 import os
@@ -32,6 +32,10 @@ gitlab = re.compile(
 
 @bot.command()
 async def about(ctx):
+    '''
+    Sends information about the bot
+    '''
+
     info = await bot.application_info()
     embed = discord.Embed(
         title=f'{info.name}',
@@ -60,11 +64,19 @@ async def about(ctx):
 
 @bot.command()
 async def stats(ctx):
+    '''
+    Same as ;about
+    '''
+
     await about(ctx)
 
 
 @bot.command()
 async def help(ctx):
+    '''
+    Sends a help message
+    '''
+
     info = await bot.application_info()
     embed = discord.Embed(
         title='Help',
