@@ -58,7 +58,7 @@ async def about(ctx):
         inline=True
     ).add_field(
         name='Latency',
-        value=f'{round(bot.latency, 2)}ms',
+        value=f'{round(bot.latency * 1000, 2)}ms',
         inline=True
     ).set_footer(text=f'Made by {info.owner}', icon_url=info.owner.avatar_url)
 
@@ -128,7 +128,7 @@ async def topgg(ctx):
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f'Pong! {round(bot.latency, 2)}ms')
+    await ctx.send(f'Pong! {round(bot.latency * 1000, 2)}ms')
 
 @bot.event
 async def on_message(message):
