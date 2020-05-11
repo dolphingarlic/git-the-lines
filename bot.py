@@ -37,13 +37,6 @@ async def about(ctx):
         title=f'{info.name}',
         description=f'{info.description}',
         colour=0x1aaae5,
-
-    ).set_thumbnail(
-        url=info.icon_url
-    ).add_field(
-        name='**__Info__**',
-        value='\u200b',
-        inline=False
     ).add_field(
         name='Guild Count',
         value=len(bot.guilds),
@@ -77,12 +70,6 @@ async def help(ctx):
         title='Help',
         description='Just send the link to the snippet - no need for extra commands! *Git the lines* even highlights the code for you',
         colour=0x41c03f
-    ).set_thumbnail(
-        url=info.icon_url
-    ).add_field(
-        name='**__Commands__**',
-        value='\u200b',
-        inline=False
     ).add_field(
         name='`;about`',
         value='About *Git the lines*',
