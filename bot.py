@@ -177,7 +177,7 @@ async def on_message(message):
 
         split_file_contents = file_contents.split('\n')
 
-        required = split_file_contents[start_line - 1:end_line].replace('\t', '    ')
+        required = list(map(lambda x: x.replace('\t', '    '), split_file_contents[start_line - 1:end_line]))
 
 
         while all(line.startswith(' ') for line in required):
