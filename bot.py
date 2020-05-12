@@ -209,7 +209,7 @@ async def on_ready():
     global start_time
     start_time = datetime.now()
 
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='for snippet links'))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='for snippet links and ;help'))
     print(f'{bot.user} has connected to Discord!')
 
 
