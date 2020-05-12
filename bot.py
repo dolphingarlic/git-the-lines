@@ -201,7 +201,7 @@ async def on_message(message):
         await bot.process_commands(message)
 
 
-@client.event
+@bot.event
 async def on_guild_join(guild):
     '''
     Sends a nice message when added to a new server
