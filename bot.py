@@ -12,6 +12,7 @@ from datetime import datetime
 
 import requests
 import discord
+from discord.utils import find
 from discord.ext import commands
 
 bot = commands.Bot(';')
@@ -177,8 +178,8 @@ async def on_message(message):
 
         split_file_contents = file_contents.split('\n')
 
-        required = list(map(lambda x: x.replace('\t', '    '), split_file_contents[start_line - 1:end_line]))
-
+        required = list(map(lambda x: x.replace('\t', '    '),
+                            split_file_contents[start_line - 1:end_line]))
 
         while all(line.startswith(' ') for line in required):
             required = list(map(lambda line: line[1:], required))
@@ -188,7 +189,7 @@ async def on_message(message):
         if len(required) != 0:
             if len(required) > 2000:
                 await message.channel.send(
-                    'Sorry, I have a 2000 character limit. Please send a shorter ' +
+                    'Sorry, Discord has a 2000 character limit. Please send a shorter ' +
                     'snippet or split the big snippet up into several smaller ones'
                 )
             else:
@@ -198,6 +199,22 @@ async def on_message(message):
         await message.edit(suppress=True)
     else:
         await bot.process_commands(message)
+
+
+@client.event
+async def on_guild_join(guild):
+    '''
+    Sends a nice message when added to a new server
+    '''
+
+    general = find(lambda x: x.name == 'general',  guild.text_channels)
+    if general and general.permissions_for(guild.me).send_messages:
+        embed = discord.Embed(
+            title='Thanks for adding me to your server!',
+            description='To get started, simply send a GitHub or GitLab snippet link, or type `;help` for a list of commands',
+            colour=0xf3d90c
+        )
+        await general.send(embed=embed)
 
 
 @bot.event
