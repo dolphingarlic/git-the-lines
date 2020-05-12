@@ -19,12 +19,12 @@ bot.remove_command('help')
 
 start_time = None
 
-github = re.compile(
+github_re = re.compile(
     r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/(?P<file_path>.+?)' +
     r'(?P<extension>\.(?P<language>.+))*#L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
 )
 
-gitlab = re.compile(
+gitlab_re = re.compile(
     r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+)\/(?P<file_path>.+?)' +
     r'(?P<extension>\.(?P<language>.+))*#L(?P<start_line>[0-9]+)(-(?P<end_line>[0-9]+))*'
 )
@@ -146,8 +146,8 @@ async def on_message(message):
     then sends the snippet in Discord
     '''
 
-    gh_match = github.search(message.content)
-    gl_match = gitlab.search(message.content)
+    gh_match = github_re.search(message.content)
+    gl_match = gitlab_re.search(message.content)
     if (gh_match or gl_match) and message.author.id != bot.user.id:
         if gh_match:
             d = gh_match.groupdict()
