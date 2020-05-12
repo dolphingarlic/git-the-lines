@@ -215,7 +215,7 @@ async def on_guild_join(guild):
             colour=0x2ac99e
         ).add_field(
             name='Simple and Unobtrusive',
-            value='Git the lines runs automatically in the background and simply listens for commands and snippet links',
+            value='Git the lines runs automatically in the background and listens for commands and snippet links',
             inline=False
         ).add_field(
             name='Contribute',
