@@ -31,6 +31,15 @@ gitlab = re.compile(
 
 
 @bot.command()
+async def github(ctx):
+    '''
+    Sends the link to the bot's GitHub repo
+    '''
+
+    await ctx.send('https://github.com/dolphingarlic/git-the-lines')
+
+
+@bot.command()
 async def about(ctx):
     '''
     Sends information about the bot
@@ -113,7 +122,7 @@ async def invite(ctx):
         invite = await bot.fetch_invite(url='https://top.gg/bot/708364985021104198')
         await ctx.send(invite)
     except:
-        await ctx.send('https://discord.com/api/oauth2/authorize?client_id=708364985021104198&permissions=75776&scope=bot')
+        await ctx.send('<https://discord.com/api/oauth2/authorize?client_id=708364985021104198&permissions=75776&scope=bot>')
 
 
 @bot.command()
@@ -128,6 +137,7 @@ async def topgg(ctx):
 @bot.command()
 async def ping(ctx):
     await ctx.send(f'Pong! {round(bot.latency * 1000, 2)}ms')
+
 
 @bot.event
 async def on_message(message):
@@ -175,7 +185,13 @@ async def on_message(message):
         required = '\n'.join(required).rstrip().replace('`', r'\`')
 
         if len(required) != 0:
-            await message.channel.send(f'```{d["language"]}\n{required}```')
+            if len(required) > 2000:
+                await message.channel.send(
+                    'Sorry, I have a 2000 character limit. Please send a shorter ' +
+                    'snippet or split the big snippet up into several smaller ones'
+                )
+            else:
+                await message.channel.send(f'```{d["language"]}\n{required}```')
         else:
             await message.channel.send('``` ```')
         await message.edit(suppress=True)
