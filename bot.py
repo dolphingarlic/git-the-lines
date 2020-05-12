@@ -190,7 +190,7 @@ async def on_message(message):
             if len(required) > 2000:
                 await message.channel.send(
                     'Sorry, Discord has a 2000 character limit. Please send a shorter ' +
-                    'snippet or split the big snippet up into several smaller ones'
+                    'snippet or split the big snippet up into several smaller ones :slight_smile:'
                 )
             else:
                 await message.channel.send(f'```{d["language"]}\n{required}```')
@@ -210,9 +210,22 @@ async def on_guild_join(guild):
     general = find(lambda x: x.name == 'general',  guild.text_channels)
     if general and general.permissions_for(guild.me).send_messages:
         embed = discord.Embed(
-            title='Thanks for adding me to your server!',
+            title='Thanks for adding me to your server! :heart:',
             description='To get started, simply send a GitHub or GitLab snippet link, or type `;help` for a list of commands',
-            colour=0xf3d90c
+            colour=0x2ac99e
+        ).add_field(
+            name='Simple and Unobtrusive',
+            value='Git the lines runs automatically in the background and simply listens for commands and snippet links',
+            inline=False
+        ).add_field(
+            name='Contribute',
+            value='We gladly accept contributions. To get started, ' +
+            'check out [Git the line\'s GitHub repo](https://github.com/dolphingarlic/git-the-lines)',
+            inline=False
+        ).add_field(
+            name='Have fun!',
+            value=':zap:',
+            inline=False
         )
         await general.send(embed=embed)
 
