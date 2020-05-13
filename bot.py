@@ -15,7 +15,7 @@ import discord
 from discord.utils import find
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix=commands.when_mentioned_or('g!'))
+bot = commands.Bot(command_prefix=commands.when_mentioned_or('g;'))
 bot.remove_command('help')
 
 start_time = None
@@ -75,7 +75,7 @@ async def about(ctx):
 @bot.command()
 async def stats(ctx):
     '''
-    Same as g!about
+    Same as g;about
     '''
 
     await about(ctx)
@@ -93,19 +93,19 @@ async def help(ctx):
         description='Just send the link to the snippet - no need for extra commands! *Git the lines* even highlights the code for you',
         colour=0x41c03f
     ).add_field(
-        name='`g!about`',
+        name='`g;about`',
         value='About *Git the lines*',
         inline=True
     ).add_field(
-        name='`g!invite` or `g!topgg`',
+        name='`g;invite` or `g;topgg`',
         value='Bot invite link',
         inline=True
     ).add_field(
-        name='`g!help`',
+        name='`g;help`',
         value='Shows this message',
         inline=True
     ).add_field(
-        name='`g!ping`',
+        name='`g;ping`',
         value='Check the bot\'s latency',
         inline=True
     )
@@ -137,7 +137,7 @@ async def topgg(ctx):
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f'Pong! {round(bot.latency * 1000, 2)}ms')
+    await ctx.send(f'Pong; {round(bot.latency * 1000, 2)}ms')
 
 
 @bot.event
@@ -211,7 +211,7 @@ async def on_guild_join(guild):
     if general and general.permissions_for(guild.me).send_messages:
         embed = discord.Embed(
             title='Thanks for adding me to your server! :heart:',
-            description='To get started, simply send a GitHub or GitLab snippet link, or type `g!help` for a list of commands',
+            description='To get started, simply send a GitHub or GitLab snippet link, or type `g;help` for a list of commands',
             colour=0x2ac99e
         ).add_field(
             name='Simple and Unobtrusive',
@@ -239,7 +239,7 @@ async def on_ready():
     global start_time
     start_time = datetime.now()
 
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='for snippet links and g!help'))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='for snippet links and g;help'))
     print(f'{bot.user} has connected to Discord!')
 
 
