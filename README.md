@@ -12,21 +12,21 @@ Just send the link to the snippet - no need for extra commands! Git the lines ev
 
 ### Ping
 
-Command: `;ping`.
+Command: `g!ping`.
 
 Action: Pings bot, returns bot delay in ms.
 
 ### Stats
 
-Command: `;stats`.
+Command: `g!stats`.
 
-Aliases: `;about`.
+Aliases: `g!about`.
 
 Action: Shows bot statistics and technical data.
 
 ### Help
 
-Command: `;help`.
+Command: `g!help`.
 
 Action: Shows help information.
 
