@@ -15,7 +15,7 @@ import discord
 from discord.utils import find
 from discord.ext import commands
 
-bot = commands.Bot(';')
+bot = commands.Bot(command_prefix=commands.when_mentioned_or(';'))
 bot.remove_command('help')
 
 start_time = None
