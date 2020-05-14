@@ -1,12 +1,11 @@
-'''
+"""
 Git the lines
 
 A Discord bot that removes embeds and prints out specific lines of code
 when a GitHub or GitLab link is sent
-'''
+"""
 
 import os
-import base64
 import re
 from datetime import datetime
 
@@ -21,35 +20,35 @@ bot.remove_command('help')
 start_time = None
 
 github_re = re.compile(
-    r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/(?P<file_path>.+?)' +
-    r'(?P<extension>\.(?P<language>.+))*#L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
+    r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/' +
+    r'(?P<file_path>.+?(\.(?P<language>.+))*)#L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
 )
 
 gitlab_re = re.compile(
-    r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+)\/(?P<file_path>.+?)' +
-    r'(?P<extension>\.(?P<language>.+))*#L(?P<start_line>[0-9]+)(-(?P<end_line>[0-9]+))*'
+    r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+)\/' +
+    r'(?P<file_path>.+?(\.(?P<language>.+)))*#L(?P<start_line>[0-9]+)(-(?P<end_line>[0-9]+))*'
 )
 
 
 async def fetch(session, url, **kwargs):
     async with session.get(url, **kwargs) as response:
-        return await response.json()
+        return await response.text()
 
 
 @bot.command()
 async def github(ctx):
-    '''
+    """
     Sends the link to the bot's GitHub repo
-    '''
+    """
 
     await ctx.send('https://github.com/dolphingarlic/git-the-lines')
 
 
 @bot.command()
 async def about(ctx):
-    '''
+    """
     Sends information about the bot
-    '''
+    """
 
     info = await bot.application_info()
     embed = discord.Embed(
@@ -79,18 +78,18 @@ async def about(ctx):
 
 @bot.command()
 async def stats(ctx):
-    '''
+    """
     Same as g;about
-    '''
+    """
 
     await about(ctx)
 
 
 @bot.command()
 async def help(ctx):
-    '''
+    """
     Sends a help message
-    '''
+    """
 
     info = await bot.application_info()
     embed = discord.Embed(
@@ -120,9 +119,9 @@ async def help(ctx):
 
 @bot.command()
 async def invite(ctx):
-    '''
+    """
     Sends a bot invite link
-    '''
+    """
 
     try:
         invite = await bot.fetch_invite(url='https://top.gg/bot/708364985021104198')
@@ -133,25 +132,29 @@ async def invite(ctx):
 
 @bot.command()
 async def topgg(ctx):
-    '''
+    """
     Sends a bot invite link
-    '''
+    """
 
     await invite(ctx)
 
 
 @bot.command()
 async def ping(ctx):
+    """
+    Checks latency
+    """
+
     await ctx.send(f'Pong; {round(bot.latency * 1000, 2)}ms')
 
 
 # TODO: Support GitHub gists
 @bot.event
 async def on_message(message):
-    '''
+    """
     Checks if the message starts is a GitHub snippet, then removes the embed,
     then sends the snippet in Discord
-    '''
+    """
 
     gh_match = github_re.search(message.content)
     gl_match = gitlab_re.search(message.content)
@@ -159,26 +162,17 @@ async def on_message(message):
         if gh_match:
             d = gh_match.groupdict()
             async with aiohttp.ClientSession() as session:
-                response_json = await fetch(
+                file_contents = await fetch(
                     session,
-                    f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}' +
-                    f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}',
-                    headers={'Accept': 'application/vnd.github.v3+json'}
+                    f'https://raw.githubusercontent.com/{d["repo"]}/{d["branch"]}/{d["file_path"]}'
                 )
-        else:
+        elif gl_match:
             d = gl_match.groupdict()
-            for x in d:
-                if d[x]:
-                    d[x] = d[x].replace('/', '%2F').replace('.', '%2E')
             async with aiohttp.ClientSession() as session:
-                response_json = await fetch(
+                file_contents = await fetch(
                     session,
-                    f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}' +
-                    f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}'
+                    f'https://gitlab.com/{d["repo"]}/-/raw/{d["branch"]}/{d["file_path"]}'
                 )
-
-        file_contents = base64.b64decode(
-            response_json['content']).decode('utf-8')
 
         if d['end_line']:
             start_line = int(d['start_line'])
@@ -219,9 +213,9 @@ async def on_message(message):
 
 @bot.event
 async def on_guild_join(guild):
-    '''
+    """
     Sends a nice message when added to a new server
-    '''
+    """
 
     general = find(lambda x: x.name == 'general',  guild.text_channels)
     if general and general.permissions_for(guild.me).send_messages:
@@ -248,9 +242,9 @@ async def on_guild_join(guild):
 
 @bot.event
 async def on_ready():
-    '''
+    """
     Just prints when the bot is ready
-    '''
+    """
 
     global start_time
     start_time = datetime.now()
