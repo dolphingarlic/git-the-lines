@@ -188,7 +188,9 @@ async def on_message(message):
 
         split_file_contents = file_contents.split('\n')
 
-        if start_line > 0 and start_line <= end_line and end_line <= len(split_file_contents):
+        if start_line > 0 and end_line <= len(split_file_contents):
+            if start_line > end_line:
+                start_line, end_line = end_line, start_line
             required = list(map(lambda x: x.replace('\t', '    '),
                                 split_file_contents[start_line - 1:end_line]))
 
