@@ -10,7 +10,7 @@ import base64
 import re
 from datetime import datetime
 
-import requests
+import aiohttp
 import discord
 from discord.utils import find
 from discord.ext import commands
@@ -29,6 +29,11 @@ gitlab_re = re.compile(
     r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+)\/(?P<file_path>.+?)' +
     r'(?P<extension>\.(?P<language>.+))*#L(?P<start_line>[0-9]+)(-(?P<end_line>[0-9]+))*'
 )
+
+
+async def fetch(session, url, **kwargs):
+    async with session.get(url, **kwargs) as response:
+        return await response.json()
 
 
 @bot.command()
@@ -140,7 +145,6 @@ async def ping(ctx):
     await ctx.send(f'Pong; {round(bot.latency * 1000, 2)}ms')
 
 
-# TODO: Use aiohttp instead of requests - https://docs.aiohttp.org/en/stable
 # TODO: Support GitHub gists
 @bot.event
 async def on_message(message):
@@ -154,20 +158,24 @@ async def on_message(message):
     if (gh_match or gl_match) and message.author.id != bot.user.id:
         if gh_match:
             d = gh_match.groupdict()
-            response_json = requests.get(
-                f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}' +
-                f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}',
-                headers={'Accept': 'application/vnd.github.v3+json'}
-            ).json()
+            async with aiohttp.ClientSession() as session:
+                response_json = await fetch(
+                    session,
+                    f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}' +
+                    f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}',
+                    headers={'Accept': 'application/vnd.github.v3+json'}
+                )
         else:
             d = gl_match.groupdict()
             for x in d:
                 if d[x]:
                     d[x] = d[x].replace('/', '%2F').replace('.', '%2E')
-            response_json = requests.get(
-                f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}' +
-                f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}'
-            ).json()
+            async with aiohttp.ClientSession() as session:
+                response_json = await fetch(
+                    session,
+                    f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}' +
+                    f'{d["extension"] if d["extension"] else ""}?ref={d["branch"]}'
+                )
 
         file_contents = base64.b64decode(
             response_json['content']).decode('utf-8')
@@ -180,7 +188,7 @@ async def on_message(message):
 
         split_file_contents = file_contents.split('\n')
 
-        if start_line > 0 and start_line <= end_line and end_line < len(split_file_contents):
+        if start_line > 0 and start_line <= end_line and end_line <= len(split_file_contents):
             required = list(map(lambda x: x.replace('\t', '    '),
                                 split_file_contents[start_line - 1:end_line]))
 
@@ -200,6 +208,8 @@ async def on_message(message):
             else:
                 await message.channel.send('``` ```')
             await message.edit(suppress=True)
+
+            print(datetime.now(), message.content)
     else:
         await bot.process_commands(message)
 

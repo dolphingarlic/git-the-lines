@@ -8,7 +8,7 @@ autopep8 = "*"
 
 [packages]
 discord-py = "*"
-requests = "*"
+aiohttp = "*"
 
 [requires]
 python_version = "3.7"
