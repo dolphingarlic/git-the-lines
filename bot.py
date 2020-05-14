@@ -209,7 +209,7 @@ async def on_message(message):
                 await message.channel.send('``` ```')
             await message.edit(suppress=True)
 
-            print(message.guild, message.clean_content)
+            print(f'{message.guild}: {message.clean_content}')
     else:
         await bot.process_commands(message)
 
