@@ -12,7 +12,7 @@ from datetime import datetime
 
 import aiohttp
 import discord
-from discord.utils import find
+from discord.utils import find, escape_markdown
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('g;'))
@@ -195,7 +195,7 @@ async def on_message(message):
             while all(line.startswith(' ') for line in required):
                 required = list(map(lambda line: line[1:], required))
 
-            required = '\n'.join(required).rstrip().replace('`', r'\`')
+            required = escape_markdown('\n'.join(required).rstrip().replace('`', r'\`'))
 
             if len(required) != 0:
                 if len(required) > 1990:
@@ -209,7 +209,7 @@ async def on_message(message):
                 await message.channel.send('``` ```')
             await message.edit(suppress=True)
 
-            print(datetime.now(), message.content)
+            print(message.guild, message.clean_content)
     else:
         await bot.process_commands(message)
 
