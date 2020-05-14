@@ -90,11 +90,11 @@ async def help(ctx):
     info = await bot.application_info()
     embed = discord.Embed(
         title='Help',
-        description='Just send the link to the snippet - no need for extra commands! *Git the lines* even highlights the code for you',
+        description='Just send the link to the snippet - no need for extra commands! Git the lines even highlights the code for you',
         colour=0x41c03f
     ).add_field(
         name='`g;about`',
-        value='About *Git the lines*',
+        value='About Git the lines',
         inline=True
     ).add_field(
         name='`g;invite` or `g;topgg`',
@@ -140,6 +140,8 @@ async def ping(ctx):
     await ctx.send(f'Pong; {round(bot.latency * 1000, 2)}ms')
 
 
+# TODO: Use aiohttp instead of requests - https://docs.aiohttp.org/en/stable
+# TODO: Support GitHub gists
 @bot.event
 async def on_message(message):
     '''
@@ -178,25 +180,26 @@ async def on_message(message):
 
         split_file_contents = file_contents.split('\n')
 
-        required = list(map(lambda x: x.replace('\t', '    '),
-                            split_file_contents[start_line - 1:end_line]))
+        if start_line > 0 and start_line <= end_line and end_line < len(split_file_contents):
+            required = list(map(lambda x: x.replace('\t', '    '),
+                                split_file_contents[start_line - 1:end_line]))
 
-        while all(line.startswith(' ') for line in required):
-            required = list(map(lambda line: line[1:], required))
+            while all(line.startswith(' ') for line in required):
+                required = list(map(lambda line: line[1:], required))
 
-        required = '\n'.join(required).rstrip().replace('`', r'\`')
+            required = '\n'.join(required).rstrip().replace('`', r'\`')
 
-        if len(required) != 0:
-            if len(required) > 2000:
-                await message.channel.send(
-                    'Sorry, Discord has a 2000 character limit. Please send a shorter ' +
-                    'snippet or split the big snippet up into several smaller ones :slight_smile:'
-                )
+            if len(required) != 0:
+                if len(required) > 1990:
+                    await message.channel.send(
+                        'Sorry, Discord has a 2000 character limit. Please send a shorter ' +
+                        'snippet or split the big snippet up into several smaller ones :slight_smile:'
+                    )
+                else:
+                    await message.channel.send(f'```{d["language"]}\n{required}```')
             else:
-                await message.channel.send(f'```{d["language"]}\n{required}```')
-        else:
-            await message.channel.send('``` ```')
-        await message.edit(suppress=True)
+                await message.channel.send('``` ```')
+            await message.edit(suppress=True)
     else:
         await bot.process_commands(message)
 
