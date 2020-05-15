@@ -103,7 +103,6 @@ async def help(ctx):
     Sends a help message
     """
 
-    info = await bot.application_info()
     embed = discord.Embed(
         title='Help',
         description='Just send the link to the snippet - no need for extra commands! Git the lines even highlights the code for you',
@@ -123,6 +122,10 @@ async def help(ctx):
     ).add_field(
         name='`g;ping`',
         value='Check the bot\'s latency',
+        inline=True
+    ).add_field(
+        name='`g;github`',
+        value='Links to the bot\'s GitHub repo',
         inline=True
     )
 
@@ -229,8 +232,8 @@ async def on_message(message):
 
         if start_line > end_line:
             start_line, end_line = end_line, start_line
-        start_line = max(1, start_line)
-        end_line = min(len(split_file_contents), end_line)
+        start_line = min(len(split_file_contents), max(1, start_line))
+        end_line = min(len(split_file_contents), max(1, end_line))
 
         required = list(map(lambda x: x.replace('\t', '    '),
                             split_file_contents[start_line - 1:end_line]))
@@ -276,7 +279,7 @@ async def on_guild_join(guild):
     ).add_field(
         name='Contribute',
         value='We gladly accept contributions. To get started, ' +
-        'check out [Git the line\'s GitHub repo](https://github.com/dolphingarlic/git-the-lines)',
+        'check out [Git the lines\' GitHub repo](https://github.com/dolphingarlic/git-the-lines)',
         inline=False
     ).add_field(
         name='Have fun!',
