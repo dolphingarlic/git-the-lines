@@ -24,19 +24,27 @@ github_re = re.compile(
     r'(?P<file_path>.+?(\.(?P<language>.+))*)#L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
 )
 
+github_gist_re = re.compile(
+    r'https:\/\/gist\.github\.com\/(.+\/)*(?P<gist_id>[0-9a-zA-Z]+)\/*#file-(?P<file_name>.+?)' +
+    r'-L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
+)
+
 gitlab_re = re.compile(
     r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+)\/' +
     r'(?P<file_path>.+?(\.(?P<language>.+)))*#L(?P<start_line>[0-9]+)(-(?P<end_line>[0-9]+))*'
 )
 
 
-async def fetch(session, url, **kwargs):
+async def fetch(session, url, format='text', **kwargs):
     """
     Uses aiohttp to make http GET requests
     """
 
     async with session.get(url, **kwargs) as response:
-        return await response.text()
+        if format == 'text':
+            return await response.text()
+        elif format == 'json':
+            return await response.json()
 
 
 @bot.command()
@@ -152,7 +160,6 @@ async def ping(ctx):
     await ctx.send(f'Pong; {round(bot.latency * 1000, 2)}ms')
 
 
-# TODO: Support GitHub gists
 @bot.event
 async def on_message(message):
     """
@@ -161,8 +168,10 @@ async def on_message(message):
     """
 
     gh_match = github_re.search(message.content)
+    gh_gist_match = github_gist_re.search(message.content)
     gl_match = gitlab_re.search(message.content)
-    if (gh_match or gl_match) and message.author.id != bot.user.id:
+
+    if (gh_match or gh_gist_match or gl_match) and message.author.id != bot.user.id:
         if gh_match:
             d = gh_match.groupdict()
             headers = {'Accept': 'application/vnd.github.raw'}
@@ -172,8 +181,33 @@ async def on_message(message):
                 file_contents = await fetch(
                     session,
                     f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}?ref={d["branch"]}',
+                    'text',
                     headers=headers,
                 )
+        elif gh_gist_match:
+            d = gh_gist_match.groupdict()
+            headers = {'Accept': 'application/vnd.github.raw'}
+            if 'GITHUB_TOKEN' in os.environ:
+                headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
+            async with aiohttp.ClientSession() as session:
+                gist_json = await fetch(
+                    session,
+                    f'https://api.github.com/gists/{d["gist_id"]}',
+                    'json',
+                    headers=headers,
+                )
+                for f in gist_json['files']:
+                    if d['file_name'] == f.lower().replace('.', '-'):
+                        d['language'] = gist_json['files'][f]['language']
+                        if d['language'] is None:
+                            d['language'] = ''
+                        file_contents = await fetch(
+                            session,
+                            gist_json['files'][f]['raw_url'],
+                            'text',
+                            headers=headers
+                        )
+                        break
         elif gl_match:
             d = gl_match.groupdict()
             for obj in d:
@@ -181,7 +215,8 @@ async def on_message(message):
             async with aiohttp.ClientSession() as session:
                 file_contents = await fetch(
                     session,
-                    f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}/raw?ref={d["branch"]}'
+                    f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}/raw?ref={d["branch"]}',
+                    'text',
                 )
 
         if d['end_line']:
@@ -197,28 +232,29 @@ async def on_message(message):
         start_line = max(1, start_line)
         end_line = min(len(split_file_contents), end_line)
 
-        if start_line > 0 and end_line <= len(split_file_contents):
-            required = list(map(lambda x: x.replace('\t', '    '),
-                                split_file_contents[start_line - 1:end_line]))
+        required = list(map(lambda x: x.replace('\t', '    '),
+                            split_file_contents[start_line - 1:end_line]))
 
-            while all(line.startswith(' ') for line in required):
-                required = list(map(lambda line: line[1:], required))
+        while all(line.startswith(' ') or len(line) == 0 for line in required):
+            required = list(map(lambda line: line[1:], required))
+            if all(len(line) == 0 for line in required):
+                break
 
-            required = '\n'.join(required).rstrip().replace('`', r'\`')
+        required = '\n'.join(required).rstrip().replace('`', r'\`')
 
-            if len(required) != 0:
-                if len(required) + len(d['language']) > 1993:
-                    await message.channel.send(
-                        'Sorry, Discord has a 2000 character limit. Please send a shorter ' +
-                        'snippet or split the big snippet up into several smaller ones :slight_smile:'
-                    )
-                else:
-                    await message.channel.send(f'```{d["language"]}\n{required}```')
+        if len(required) != 0:
+            if len(required) + len(d['language']) > 1993:
+                await message.channel.send(
+                    'Sorry, Discord has a 2000 character limit. Please send a shorter ' +
+                    'snippet or split the big snippet up into several smaller ones :slight_smile:'
+                )
             else:
-                await message.channel.send('``` ```')
-            await message.edit(suppress=True)
+                await message.channel.send(f'```{d["language"]}\n{required}```')
+        else:
+            await message.channel.send('``` ```')
+        await message.edit(suppress=True)
 
-            print(f'{message.guild}: {message.clean_content}')
+        print(f'{message.guild}: {message.clean_content}')
     else:
         await bot.process_commands(message)
 
