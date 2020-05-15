@@ -161,10 +161,14 @@ async def on_message(message):
     if (gh_match or gl_match) and message.author.id != bot.user.id:
         if gh_match:
             d = gh_match.groupdict()
+            headers = {'Accept': 'application/vnd.github.raw'}
+            if os.environ["GITHUB_TOKEN"]:
+                headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
             async with aiohttp.ClientSession() as session:
                 file_contents = await fetch(
                     session,
-                    f'https://raw.githubusercontent.com/{d["repo"]}/{d["branch"]}/{d["file_path"]}'
+                    f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}?ref={d["branch"]}',
+                    headers=headers,
                 )
         elif gl_match:
             d = gl_match.groupdict()
