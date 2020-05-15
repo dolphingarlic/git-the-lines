@@ -222,6 +222,9 @@ async def on_message(message):
                     'text',
                 )
 
+        if d['language'] is None:
+            d['language'] = ''
+
         if d['end_line']:
             start_line = int(d['start_line'])
             end_line = int(d['end_line'])
@@ -237,6 +240,7 @@ async def on_message(message):
 
         required = list(map(lambda x: x.replace('\t', '    '),
                             split_file_contents[start_line - 1:end_line]))
+        print(required)
 
         while all(line.startswith(' ') or len(line) == 0 for line in required):
             required = list(map(lambda line: line[1:], required))
