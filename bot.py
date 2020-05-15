@@ -265,27 +265,25 @@ async def on_guild_join(guild):
     Sends a nice message when added to a new server
     """
 
-    general = find(lambda x: x.name == 'general',  guild.text_channels)
-    if general and general.permissions_for(guild.me).send_messages:
-        embed = discord.Embed(
-            title='Thanks for adding me to your server! :heart:',
-            description='To get started, simply send a GitHub or GitLab snippet link, or type `g;help` for a list of commands',
-            colour=0x2ac99e
-        ).add_field(
-            name='Simple and Unobtrusive',
-            value='Git the lines runs automatically in the background and listens for commands and snippet links',
-            inline=False
-        ).add_field(
-            name='Contribute',
-            value='We gladly accept contributions. To get started, ' +
-            'check out [Git the line\'s GitHub repo](https://github.com/dolphingarlic/git-the-lines)',
-            inline=False
-        ).add_field(
-            name='Have fun!',
-            value=':zap:',
-            inline=False
-        )
-        await general.send(embed=embed)
+    embed = discord.Embed(
+        title='Thanks for adding me to your server! :heart:',
+        description='To get started, simply send a GitHub or GitLab snippet link, or type `g;help` for a list of commands',
+        colour=0x2ac99e
+    ).add_field(
+        name='Simple and Unobtrusive',
+        value='Git the lines runs automatically in the background and listens for commands and snippet links',
+        inline=False
+    ).add_field(
+        name='Contribute',
+        value='We gladly accept contributions. To get started, ' +
+        'check out [Git the line\'s GitHub repo](https://github.com/dolphingarlic/git-the-lines)',
+        inline=False
+    ).add_field(
+        name='Have fun!',
+        value=':zap:',
+        inline=False
+    )
+    await guild.system_channel.send(embed=embed)
 
 
 @bot.event
