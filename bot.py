@@ -31,6 +31,10 @@ gitlab_re = re.compile(
 
 
 async def fetch(session, url, **kwargs):
+    """
+    Uses aiohttp to make http GET requests
+    """
+
     async with session.get(url, **kwargs) as response:
         return await response.text()
 
@@ -162,7 +166,7 @@ async def on_message(message):
         if gh_match:
             d = gh_match.groupdict()
             headers = {'Accept': 'application/vnd.github.raw'}
-            if os.environ["GITHUB_TOKEN"]:
+            if 'GITHUB_TOKEN' in os.environ:
                 headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
             async with aiohttp.ClientSession() as session:
                 file_contents = await fetch(
@@ -188,6 +192,8 @@ async def on_message(message):
 
         if start_line > end_line:
             start_line, end_line = end_line, start_line
+        start_line = max(1, start_line)
+        end_line = min(len(split_file_contents), end_line)
 
         if start_line > 0 and end_line <= len(split_file_contents):
             required = list(map(lambda x: x.replace('\t', '    '),
@@ -199,7 +205,7 @@ async def on_message(message):
             required = '\n'.join(required).rstrip().replace('`', r'\`')
 
             if len(required) != 0:
-                if len(required) > 1990:
+                if len(required) + len(d['language']) > 1993:
                     await message.channel.send(
                         'Sorry, Discord has a 2000 character limit. Please send a shorter ' +
                         'snippet or split the big snippet up into several smaller ones :slight_smile:'
