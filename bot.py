@@ -176,10 +176,12 @@ async def on_message(message):
                 )
         elif gl_match:
             d = gl_match.groupdict()
+            for obj in d:
+                d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
             async with aiohttp.ClientSession() as session:
                 file_contents = await fetch(
                     session,
-                    f'https://gitlab.com/{d["repo"]}/-/raw/{d["branch"]}/{d["file_path"]}'
+                    f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}/raw?ref={d["branch"]}'
                 )
 
         if d['end_line']:
