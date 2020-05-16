@@ -2,10 +2,10 @@
 Cog that gives information about the bot
 """
 
+import os
 from datetime import datetime
 
 import discord
-from discord import Activity, ActivityType
 from discord.ext.commands import Cog, command
 
 
@@ -14,7 +14,11 @@ class BotInfo(Cog):
         self.bot = bot
         self.start_time = datetime.now()
 
-    @command(aliases=['source', 'repo'])
+        self.prefix = 'g;'
+        if 'BOT_PREFIX' in os.environ:
+            self.prefix = os.environ['BOT_PREFIX']
+
+    @command(aliases=['source'])
     async def github(self, ctx):
         """
         Sends the link to the bot's GitHub repo
@@ -64,23 +68,23 @@ class BotInfo(Cog):
             description='Just send the link to the snippet - no need for extra commands! Git the lines even highlights the code for you',
             colour=0x41c03f
         ).add_field(
-            name='`g;about`',
+            name=f'`{self.prefix}about` or `{self.prefix}stats`',
             value='About Git the lines',
             inline=True
         ).add_field(
-            name='`g;invite` or `g;topgg`',
+            name=f'`{self.prefix}invite` or `{self.prefix}topgg`',
             value='Bot invite link',
             inline=True
         ).add_field(
-            name='`g;help`',
+            name=f'`{self.prefix}help`',
             value='Shows this message',
             inline=True
         ).add_field(
-            name='`g;ping`',
+            name=f'`{self.prefix}ping`',
             value='Check the bot\'s latency',
             inline=True
         ).add_field(
-            name='`g;github`',
+            name=f'`{self.prefix}github` or `{self.prefix}source`',
             value='Links to the bot\'s GitHub repo',
             inline=True
         )
@@ -132,12 +136,3 @@ class BotInfo(Cog):
             inline=False
         )
         await guild.system_channel.send(embed=embed)
-
-    @Cog.listener()
-    async def on_ready(self):
-        """
-        Just prints when the bot is ready
-        """
-
-        await self.bot.change_presence(activity=Activity(type=ActivityType.watching, name='for snippet links and g;help'))
-        print(f'{self.bot.user} has connected to Discord!')

@@ -52,9 +52,9 @@ Action: Sends a bot invite link.
 
 ### GitHub Repo
 
-Command: `g;github`
+Command: `g;github`.
 
-Aliases: `g;source`, `g;repo`.
+Aliases: `g;source`.
 
 Action: Sends the bot GitHub repo link
 

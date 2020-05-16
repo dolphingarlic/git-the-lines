@@ -133,5 +133,3 @@ class PrintSnippets(Cog):
             else:
                 await message.channel.send('``` ```')
             await message.edit(suppress=True)
-
-            print(f'{message.guild}: {message.clean_content}')
