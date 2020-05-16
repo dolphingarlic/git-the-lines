@@ -8,6 +8,18 @@ Just send the link to the snippet - no need for extra commands! Git the lines ev
 
 ![The bot in action](git-the-lines.png)
 
+## Features
+
+- GitHub
+  - Public repos and gists
+  - Private repos and gists (if self-hosting)
+- GitLab
+  - Public repos
+
+## Upcoming
+
+- BitBucket
+
 ## Commands
 
 ### Ping
@@ -16,11 +28,11 @@ Command: `g;ping`.
 
 Action: Pings bot, returns bot delay in ms.
 
-### Stats
+### About
 
-Command: `g;stats`.
+Command: `g;about`.
 
-Aliases: `g;about`.
+Aliases: `g;stats`.
 
 Action: Shows bot statistics and technical data.
 
@@ -29,6 +41,22 @@ Action: Shows bot statistics and technical data.
 Command: `g;help`.
 
 Action: Shows help information.
+
+### Invite
+
+Command: `g;invite`.
+
+Aliases: `g;topgg`.
+
+Action: Sends a bot invite link.
+
+### GitHub Repo
+
+Command: `g;github`
+
+Aliases: `g;source`, `g;repo`.
+
+Action: Sends the bot GitHub repo link
 
 ## Get the bot
 
