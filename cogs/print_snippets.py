@@ -18,7 +18,7 @@ class PrintSnippets(Cog):
             r'(?P<file_path>.+?(\.(?P<language>.+))*)#L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
         )
         self.github_gist_re = re.compile(
-            r'https:\/\/gist\.github\.com\/(.+\/)*(?P<gist_id>[0-9a-zA-Z]+)\/*#file-(?P<file_name>.+?)' +
+            r'https:\/\/gist\.github\.com\/([^\/]*)\/(?P<gist_id>[0-9a-zA-Z]+)\/*(?P<revision>[0-9a-zA-Z]*)\/*#file-(?P<file_name>.+?)' +
             r'-L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
         )
         self.gitlab_re = re.compile(
@@ -69,7 +69,7 @@ class PrintSnippets(Cog):
                 async with aiohttp.ClientSession() as session:
                     gist_json = await self.fetch(
                         session,
-                        f'https://api.github.com/gists/{d["gist_id"]}',
+                        f'https://api.github.com/gists/{d["gist_id"]}{"/" + d["revision"] if len(d["revision"]) > 0 else ""}',
                         'json',
                         headers=headers,
                     )
