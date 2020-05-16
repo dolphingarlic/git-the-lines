@@ -15,15 +15,15 @@ class PrintSnippets(Cog):
 
         self.github_re = re.compile(
             r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/' +
-            r'(?P<file_path>.+?(\.(?P<language>.+))*)#L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
+            r'(?P<file_path>.+?(\.(?P<language>.+))*)#L(?P<start_line>\d+)(-L(?P<end_line>\d+))*'
         )
         self.github_gist_re = re.compile(
             r'https:\/\/gist\.github\.com\/([^\/]*)\/(?P<gist_id>[0-9a-zA-Z]+)\/*(?P<revision>[0-9a-zA-Z]*)\/*#file-(?P<file_name>.+?)' +
-            r'-L(?P<start_line>[0-9]+)(-L(?P<end_line>[0-9]+))*'
+            r'-L(?P<start_line>\d+)(-L(?P<end_line>\d+))*'
         )
         self.gitlab_re = re.compile(
             r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+)\/' +
-            r'(?P<file_path>.+?(\.(?P<language>.+)))*#L(?P<start_line>[0-9]+)(-(?P<end_line>[0-9]+))*'
+            r'(?P<file_path>.+?(\.(?P<language>.+)))*#L(?P<start_line>\d+)(-(?P<end_line>\d+))*'
         )
 
     async def fetch(self, session, url, format='text', **kwargs):
