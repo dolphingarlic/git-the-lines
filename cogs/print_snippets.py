@@ -27,6 +27,11 @@ class PrintSnippets(Cog):
             r'(?P<file_path>.+)*#L(?P<start_line>\d+)(-(?P<end_line>\d+))?\b'
         )
 
+        self.bitbucket_re = re.compile(
+            r'https:\/\/bitbucket\.org\/(?P<repo>.+)\/src\/(?P<branch>.+?)\/' +
+            r'(?P<file_path>.+)#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?\b'
+        )
+
     async def fetch(self, session, url, format='text', **kwargs):
         """
         Uses aiohttp to make http GET requests
@@ -38,6 +43,24 @@ class PrintSnippets(Cog):
             elif format == 'json':
                 return await response.json()
 
+
+    async def revert_to_orig(self, d):
+        """
+        Replace URL Encoded values back to their original
+        """
+        for obj in d:
+            if d[obj] is not None:
+                d[obj] = d[obj].replace('%2F', '/').replace('%2E', '.')
+
+    async def orig_to_encode(self, d):
+        """
+        Encode URL Parameters
+        """
+        for obj in d:
+            if d[obj] is not None:
+                d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
+
+
     @Cog.listener()
     async def on_message(self, message):
         """
@@ -48,8 +71,8 @@ class PrintSnippets(Cog):
         gh_match = self.github_re.search(message.content)
         gh_gist_match = self.github_gist_re.search(message.content)
         gl_match = self.gitlab_re.search(message.content)
-
-        if (gh_match or gh_gist_match or gl_match) and message.author.id != self.bot.user.id:
+        bb_match = self.bitbucket_re.search(message.content)
+        if (gh_match or gh_gist_match or gl_match or bb_match) and message.author.id != self.bot.user.id:
             if gh_match:
                 d = gh_match.groupdict()
                 headers = {'Accept': 'application/vnd.github.v3.raw'}
@@ -88,18 +111,25 @@ class PrintSnippets(Cog):
                         return None
             elif gl_match:
                 d = gl_match.groupdict()
-                for obj in d:
-                    if d[obj] is not None:
-                        d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
+                await self.orig_to_encode(d)
                 async with aiohttp.ClientSession() as session:
                     file_contents = await self.fetch(
                         session,
                         f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}/raw?ref={d["branch"]}',
                         'text',
                     )
+                await self.revert_to_orig(d)
+            elif bb_match:
+                d = bb_match.groupdict()
                 for obj in d:
-                    if d[obj] is not None:
-                        d[obj] = d[obj].replace('%2F', '/').replace('%2E', '.')
+                    await self.orig_to_encode(d)
+                async with aiohttp.ClientSession() as session:
+                    file_contents = await self.fetch(
+                        session,
+                        f'https://bitbucket.org/{d["repo"]}/raw/{d["branch"]}/{d["file_path"]}',
+                        'text',
+                    )
+                await self.revert_to_orig(d)
 
             if d['end_line']:
                 start_line = int(d['start_line'])
