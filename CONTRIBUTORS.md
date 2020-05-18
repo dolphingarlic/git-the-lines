@@ -9,3 +9,5 @@
   - Added commands
 - Mukundan Senthil [@Mukundan314](https://github.com/Mukundan314)
   - Added support for private GitHub repos
+- Matej Plavevski [@MatejMecka](https://github.com/MatejMecka)
+  - Added BitBucket support
