@@ -53,6 +53,9 @@ class PrintSnippets(Cog):
                 d[obj] = d[obj].replace('%2F', '/').replace('%2E', '.')
 
     async def orig_to_encode(self, d):
+        """
+        Encode URL Parameters
+        """
         for obj in d:
             if d[obj] is not None:
                 d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
