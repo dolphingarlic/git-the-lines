@@ -17,10 +17,8 @@ Just send the link to the snippet - no need for extra commands! Git the lines ev
   - Private repos and gists (if self-hosting)
 - GitLab
   - Public repos
-
-### Upcoming
-
 - BitBucket
+  - Public repos
 
 ## Commands
 
