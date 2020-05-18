@@ -9,6 +9,8 @@ autopep8 = "*"
 [packages]
 discord-py = "*"
 aiohttp = "*"
+pytest = "*"
+dpytest = "*"
 
 [requires]
 python_version = "3.7"

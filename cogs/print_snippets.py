@@ -15,15 +15,16 @@ class PrintSnippets(Cog):
 
         self.github_re = re.compile(
             r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/' +
-            r'(?P<file_path>.+?(\.(?P<language>.+))*)#L(?P<start_line>\d+)(-L(?P<end_line>\d+))*'
+            r'(?P<file_path>.+)#L(?P<start_line>\d+)(-L(?P<end_line>\d+))?\b'
         )
         self.github_gist_re = re.compile(
-            r'https:\/\/gist\.github\.com\/([^\/]*)\/(?P<gist_id>[0-9a-zA-Z]+)\/*(?P<revision>[0-9a-zA-Z]*)\/*#file-(?P<file_name>.+?)' +
-            r'-L(?P<start_line>\d+)(-L(?P<end_line>\d+))*'
+            r'https:\/\/gist\.github\.com\/([^\/]*)\/(?P<gist_id>[0-9a-zA-Z]+)\/*' +
+            r'(?P<revision>[0-9a-zA-Z]*)\/*#file-(?P<file_path>.+?)' +
+            r'-L(?P<start_line>\d+)(-L(?P<end_line>\d+))?\b'
         )
         self.gitlab_re = re.compile(
-            r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+)\/' +
-            r'(?P<file_path>.+?(\.(?P<language>.+)))*#L(?P<start_line>\d+)(-(?P<end_line>\d+))*'
+            r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+?)\/' +
+            r'(?P<file_path>.+)*#L(?P<start_line>\d+)(-(?P<end_line>\d+))?\b'
         )
 
     async def fetch(self, session, url, format='text', **kwargs):
@@ -74,10 +75,8 @@ class PrintSnippets(Cog):
                         headers=headers,
                     )
                     for f in gist_json['files']:
-                        if d['file_name'] == f.lower().replace('.', '-'):
-                            d['language'] = gist_json['files'][f]['language']
-                            if d['language'] is None:
-                                d['language'] = ''
+                        if d['file_path'] == f.lower().replace('.', '-'):
+                            d['file_path'] = f
                             file_contents = await self.fetch(
                                 session,
                                 gist_json['files'][f]['raw_url'],
@@ -90,16 +89,17 @@ class PrintSnippets(Cog):
             elif gl_match:
                 d = gl_match.groupdict()
                 for obj in d:
-                    d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
+                    if d[obj] is not None:
+                        d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
                 async with aiohttp.ClientSession() as session:
                     file_contents = await self.fetch(
                         session,
                         f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}/raw?ref={d["branch"]}',
                         'text',
                     )
-
-            if d['language'] is None:
-                d['language'] = ''
+                for obj in d:
+                    if d[obj] is not None:
+                        d[obj] = d[obj].replace('%2F', '/').replace('%2E', '.')
 
             if d['end_line']:
                 start_line = int(d['start_line'])
@@ -111,8 +111,10 @@ class PrintSnippets(Cog):
 
             if start_line > end_line:
                 start_line, end_line = end_line, start_line
-            start_line = min(len(split_file_contents), max(1, start_line))
-            end_line = min(len(split_file_contents), max(1, end_line))
+            if start_line > len(split_file_contents) or end_line < 1:
+                return None
+            start_line = max(1, start_line)
+            end_line = min(len(split_file_contents), end_line)
 
             required = list(map(lambda x: x.replace('\t', '    '),
                                 split_file_contents[start_line - 1:end_line]))
@@ -124,14 +126,15 @@ class PrintSnippets(Cog):
 
             required = '\n'.join(required).rstrip().replace('`', r'\`')
 
+            language = d['file_path'].split('/')[-1].split('.')[-1]
             if len(required) != 0:
-                if len(required) + len(d['language']) > 1993:
+                if len(required) + len(language) > 1993:
                     await message.channel.send(
                         'Sorry, Discord has a 2000 character limit. Please send a shorter ' +
                         'snippet or split the big snippet up into several smaller ones :slight_smile:'
                     )
                 else:
-                    await message.channel.send(f'```{d["language"]}\n{required}```')
+                    await message.channel.send(f'```{language}\n{required}```')
             else:
                 await message.channel.send('``` ```')
             await message.edit(suppress=True)
