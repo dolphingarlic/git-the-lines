@@ -97,11 +97,7 @@ class BotInfo(Cog):
         Sends a bot invite link
         """
 
-        try:
-            invite = await self.bot.fetch_invite(url='https://top.gg/bot/708364985021104198')
-            await ctx.send(invite)
-        except:
-            await ctx.send('<https://discord.com/api/oauth2/authorize?client_id=708364985021104198&permissions=75776&scope=bot>')
+        await ctx.send('https://top.gg/bot/708364985021104198')
 
     @command()
     async def ping(self, ctx):

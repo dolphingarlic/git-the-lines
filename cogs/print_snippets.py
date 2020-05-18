@@ -51,7 +51,7 @@ class PrintSnippets(Cog):
         if (gh_match or gh_gist_match or gl_match) and message.author.id != self.bot.user.id:
             if gh_match:
                 d = gh_match.groupdict()
-                headers = {'Accept': 'application/vnd.github.raw'}
+                headers = {'Accept': 'application/vnd.github.v3.raw'}
                 if 'GITHUB_TOKEN' in os.environ:
                     headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
                 async with aiohttp.ClientSession() as session:
@@ -63,7 +63,7 @@ class PrintSnippets(Cog):
                     )
             elif gh_gist_match:
                 d = gh_gist_match.groupdict()
-                headers = {}
+                headers = {'Accept': 'application/vnd.github.v3.raw'}
                 if 'GITHUB_TOKEN' in os.environ:
                     headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
                 async with aiohttp.ClientSession() as session:
@@ -85,6 +85,8 @@ class PrintSnippets(Cog):
                                 headers=headers,
                             )
                             break
+                    else:
+                        return None
             elif gl_match:
                 d = gl_match.groupdict()
                 for obj in d:

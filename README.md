@@ -60,7 +60,7 @@ Action: Sends the bot GitHub repo link
 
 ## Get the bot
 
-[Use this link](https://discord.com/api/oauth2/authorize?client_id=708364985021104198&permissions=75776&scope=bot) to add the bot to your server
+[Use this link](https://top.gg/bot/708364985021104198) to add the bot to your server
 
 Alternatively, you can self-host the bot using Heroku, pythonanywhere, or any other hosting service. Simply create a file named `.env` and set `DISCORD_TOKEN` to your Discord bot token
 
