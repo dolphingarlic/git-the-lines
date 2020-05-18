@@ -1,7 +1,4 @@
-import os
-
-from discord import Activity, ActivityType
-from discord.ext.commands import Bot, when_mentioned_or
+from discord.ext.commands import Bot
 import discord.ext.test as dpytest
 import pytest
 
@@ -10,15 +7,7 @@ from cogs.print_snippets import PrintSnippets
 
 @pytest.mark.asyncio
 async def test_github():
-    prefix = 'g;'
-    if 'BOT_PREFIX' in os.environ:
-        prefix = os.environ['BOT_PREFIX']
-
-    bot = Bot(
-        command_prefix=when_mentioned_or(prefix),
-        help_command=None,
-        activity=Activity(type=ActivityType.watching, name=f'for snippet links and {prefix}help'),
-    )
+    bot = Bot(command_prefix='.')
 
     bot.add_cog(PrintSnippets(bot))
 
@@ -43,15 +32,7 @@ async def test_github():
 
 @pytest.mark.asyncio
 async def test_gitlab():
-    prefix = 'g;'
-    if 'BOT_PREFIX' in os.environ:
-        prefix = os.environ['BOT_PREFIX']
-
-    bot = Bot(
-        command_prefix=when_mentioned_or(prefix),
-        help_command=None,
-        activity=Activity(type=ActivityType.watching, name=f'for snippet links and {prefix}help'),
-    )
+    bot = Bot(command_prefix='.')
 
     bot.add_cog(PrintSnippets(bot))
 
