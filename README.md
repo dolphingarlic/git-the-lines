@@ -1,5 +1,7 @@
 # Git the lines
 
+[![Build Status](https://travis-ci.com/dolphingarlic/git-the-lines.svg?branch=master)](https://travis-ci.com/dolphingarlic/git-the-lines)
+
 A Discord bot that prints out the lines referenced in a GitHub or GitLab link
 
 ## Usage
@@ -8,7 +10,7 @@ Just send the link to the snippet - no need for extra commands! Git the lines ev
 
 ![The bot in action](git-the-lines.png)
 
-## Features
+### Features
 
 - GitHub
   - Public repos and gists
@@ -16,7 +18,7 @@ Just send the link to the snippet - no need for extra commands! Git the lines ev
 - GitLab
   - Public repos
 
-## Upcoming
+### Upcoming
 
 - BitBucket
 
