@@ -13,6 +13,7 @@ from discord.ext.commands import Bot, when_mentioned_or
 
 from cogs.bot_info import BotInfo
 from cogs.print_snippets import PrintSnippets
+from cogs.top_gg import TopGG
 
 logging.basicConfig(level=logging.INFO)
 
@@ -28,5 +29,6 @@ bot = Bot(
 
 bot.add_cog(BotInfo(bot))
 bot.add_cog(PrintSnippets(bot))
+bot.add_cog(TopGG(bot))
 
 bot.run(os.environ['DISCORD_TOKEN'])
