@@ -3,6 +3,7 @@
 - Aadi Bajpai [@aadibajpai](https://github.com/aadibajpai/)
   - Idea for the bot
   - Emotional support
+  - Bug hunter
 - Andi Qu [@dolphingarlic](https://github.com/dolphingarlic/)
   - Creator
   - Added GitHub and GitLab support
