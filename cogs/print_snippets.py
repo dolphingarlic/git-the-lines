@@ -146,6 +146,12 @@ class PrintSnippets(Cog):
             start_line = max(1, start_line)
             end_line = min(len(split_file_contents), end_line)
 
+            if end_line - start_line > 49:
+                await message.channel.send(
+                    'Please limit your snippets to 50 lines to prevent spam :slight_smile:'
+                )
+                return None
+
             required = list(map(lambda x: x.replace('\t', '    '),
                                 split_file_contents[start_line - 1:end_line]))
 
