@@ -7,9 +7,8 @@ from cogs.print_snippets import PrintSnippets
 
 @pytest.mark.asyncio
 async def test_github():
-    """
-    Tests printing GitHub snippets
-    """
+    """Tests printing GitHub snippets"""
+
     bot = Bot(command_prefix='.')
 
     bot.add_cog(PrintSnippets(bot))
@@ -35,9 +34,8 @@ async def test_github():
 
 @pytest.mark.asyncio
 async def test_github_gists():
-    """
-    Tests printing GitHub Gist snippets
-    """
+    """Tests printing GitHub Gist snippets"""
+
     bot = Bot(command_prefix='.')
 
     bot.add_cog(PrintSnippets(bot))
@@ -63,9 +61,8 @@ async def test_github_gists():
 
 @pytest.mark.asyncio
 async def test_gitlab():
-    """
-    Tests printing GitLab snippets
-    """
+    """Tests printing GitLab snippets"""
+
     bot = Bot(command_prefix='.')
 
     bot.add_cog(PrintSnippets(bot))
@@ -94,9 +91,8 @@ async def test_gitlab():
 
 @pytest.mark.asyncio
 async def test_bitbucket():
-    """
-    Tests printing BitBucket snippets
-    """
+    """Tests printing BitBucket snippets"""
+
     bot = Bot(command_prefix='.')
 
     bot.add_cog(PrintSnippets(bot))

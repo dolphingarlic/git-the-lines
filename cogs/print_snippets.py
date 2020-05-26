@@ -32,7 +32,7 @@ class PrintSnippets(Cog):
             r'(?P<file_path>.+)#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?\b'
         )
 
-    async def fetch(self, session, url, format='text', **kwargs):
+    async def fetch_http(self, session, url, format='text', **kwargs):
         """
         Uses aiohttp to make http GET requests
         """
@@ -42,7 +42,6 @@ class PrintSnippets(Cog):
                 return await response.text()
             elif format == 'json':
                 return await response.json()
-
 
     async def revert_to_orig(self, d):
         """
@@ -59,7 +58,6 @@ class PrintSnippets(Cog):
         for obj in d:
             if d[obj] is not None:
                 d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
-
 
     @Cog.listener()
     async def on_message(self, message):
@@ -79,7 +77,7 @@ class PrintSnippets(Cog):
                 if 'GITHUB_TOKEN' in os.environ:
                     headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
                 async with aiohttp.ClientSession() as session:
-                    file_contents = await self.fetch(
+                    file_contents = await self.fetch_http(
                         session,
                         f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}?ref={d["branch"]}',
                         'text',
@@ -91,7 +89,7 @@ class PrintSnippets(Cog):
                 if 'GITHUB_TOKEN' in os.environ:
                     headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
                 async with aiohttp.ClientSession() as session:
-                    gist_json = await self.fetch(
+                    gist_json = await self.fetch_http(
                         session,
                         f'https://api.github.com/gists/{d["gist_id"]}{"/" + d["revision"] if len(d["revision"]) > 0 else ""}',
                         'json',
@@ -100,7 +98,7 @@ class PrintSnippets(Cog):
                     for f in gist_json['files']:
                         if d['file_path'] == f.lower().replace('.', '-'):
                             d['file_path'] = f
-                            file_contents = await self.fetch(
+                            file_contents = await self.fetch_http(
                                 session,
                                 gist_json['files'][f]['raw_url'],
                                 'text',
@@ -113,7 +111,7 @@ class PrintSnippets(Cog):
                 d = gl_match.groupdict()
                 await self.orig_to_encode(d)
                 async with aiohttp.ClientSession() as session:
-                    file_contents = await self.fetch(
+                    file_contents = await self.fetch_http(
                         session,
                         f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}/raw?ref={d["branch"]}',
                         'text',
@@ -121,10 +119,9 @@ class PrintSnippets(Cog):
                 await self.revert_to_orig(d)
             elif bb_match:
                 d = bb_match.groupdict()
-                for obj in d:
-                    await self.orig_to_encode(d)
+                await self.orig_to_encode(d)
                 async with aiohttp.ClientSession() as session:
-                    file_contents = await self.fetch(
+                    file_contents = await self.fetch_http(
                         session,
                         f'https://bitbucket.org/{d["repo"]}/raw/{d["branch"]}/{d["file_path"]}',
                         'text',
