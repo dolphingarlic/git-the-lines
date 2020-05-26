@@ -14,6 +14,6 @@ class TopGG(Cog):
         self.token = os.environ['TOP_GG_TOKEN']
         self.dblpy = dbl.DBLClient(self.bot, self.token, autopost=True)
 
-    @Cog.listener
+    @Cog.listener()
     async def on_guild_post(self):
         print("Server count posted successfully")
