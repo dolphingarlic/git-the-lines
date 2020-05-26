@@ -167,7 +167,7 @@ class PrintSnippets(Cog):
             required = '\n'.join(required).rstrip().replace('`', r'\`')
 
             language = d['file_path'].split('/')[-1].split('.')[-1]
-            if not language.isalnum():
+            if not language.replace('-', '').replace('+', '').isalnum():
                 language = ''
 
             if len(required) != 0:
