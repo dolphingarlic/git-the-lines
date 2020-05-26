@@ -167,6 +167,9 @@ class PrintSnippets(Cog):
             required = '\n'.join(required).rstrip().replace('`', r'\`')
 
             language = d['file_path'].split('/')[-1].split('.')[-1]
+            if not language.isalnum():
+                language = ''
+
             if len(required) != 0:
                 if len(required) + len(language) > 1993:
                     await message.channel.send(
