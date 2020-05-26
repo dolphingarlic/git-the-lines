@@ -9,28 +9,31 @@ import aiohttp
 from discord.ext.commands import Cog
 
 
+GITHUB_RE = re.compile(
+    r'https://github\.com/(?P<repo>.+)/blob/(?P<branch>.+?)/' +
+    r'(?P<file_path>.+)#L(?P<start_line>\d+)(-L(?P<end_line>\d+))?\b'
+)
+
+GITHUB_GIST_RE = re.compile(
+    r'https://gist\.github\.com/([^/]*)/(?P<gist_id>[0-9a-zA-Z]+)/*' +
+    r'(?P<revision>[0-9a-zA-Z]*)/*#file-(?P<file_path>.+?)' +
+    r'-L(?P<start_line>\d+)(-L(?P<end_line>\d+))?\b'
+)
+
+GITLAB_RE = re.compile(
+    r'https://gitlab\.com/(?P<repo>.+)/\-/blob/(?P<branch>.+?)/' +
+    r'(?P<file_path>.+)*#L(?P<start_line>\d+)(-(?P<end_line>\d+))?\b'
+)
+
+BITBUCKET_RE = re.compile(
+    r'https://bitbucket\.org/(?P<repo>.+)/src/(?P<branch>.+?)/' +
+    r'(?P<file_path>.+)#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?\b'
+)
+
+
 class PrintSnippets(Cog):
     def __init__(self, bot):
         self.bot = bot
-
-        self.github_re = re.compile(
-            r'https:\/\/github\.com\/(?P<repo>.+)\/blob\/(?P<branch>.+?)\/' +
-            r'(?P<file_path>.+)#L(?P<start_line>\d+)(-L(?P<end_line>\d+))?\b'
-        )
-        self.github_gist_re = re.compile(
-            r'https:\/\/gist\.github\.com\/([^\/]*)\/(?P<gist_id>[0-9a-zA-Z]+)\/*' +
-            r'(?P<revision>[0-9a-zA-Z]*)\/*#file-(?P<file_path>.+?)' +
-            r'-L(?P<start_line>\d+)(-L(?P<end_line>\d+))?\b'
-        )
-        self.gitlab_re = re.compile(
-            r'https:\/\/gitlab\.com\/(?P<repo>.+)\/\-\/blob\/(?P<branch>.+?)\/' +
-            r'(?P<file_path>.+)*#L(?P<start_line>\d+)(-(?P<end_line>\d+))?\b'
-        )
-
-        self.bitbucket_re = re.compile(
-            r'https:\/\/bitbucket\.org\/(?P<repo>.+)\/src\/(?P<branch>.+?)\/' +
-            r'(?P<file_path>.+)#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?\b'
-        )
 
     async def fetch_http(self, session, url, format='text', **kwargs):
         """
@@ -66,10 +69,10 @@ class PrintSnippets(Cog):
         then sends the snippet in Discord
         """
 
-        gh_match = self.github_re.search(message.content)
-        gh_gist_match = self.github_gist_re.search(message.content)
-        gl_match = self.gitlab_re.search(message.content)
-        bb_match = self.bitbucket_re.search(message.content)
+        gh_match = GITHUB_RE.search(message.content)
+        gh_gist_match = GITHUB_GIST_RE.search(message.content)
+        gl_match = GITLAB_RE.search(message.content)
+        bb_match = BITBUCKET_RE.search(message.content)
         if (gh_match or gh_gist_match or gl_match or bb_match) and message.author.id != self.bot.user.id:
             if gh_match:
                 d = gh_match.groupdict()
