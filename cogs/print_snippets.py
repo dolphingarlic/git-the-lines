@@ -40,13 +40,13 @@ class PrintSnippets(Cog):
 
         self.bot = bot
 
-    async def fetch_http(self, session, url, format='text', **kwargs):
+    async def fetch_http(self, session, url, response_format='text', **kwargs):
         """Uses aiohttp to make http GET requests"""
 
         async with session.get(url, **kwargs) as response:
-            if format == 'text':
+            if response_format == 'text':
                 return await response.text()
-            elif format == 'json':
+            elif response_format == 'json':
                 return await response.json()
 
     async def revert_to_orig(self, d):
