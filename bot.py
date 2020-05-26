@@ -29,6 +29,8 @@ bot = Bot(
 
 bot.add_cog(BotInfo(bot))
 bot.add_cog(PrintSnippets(bot))
-bot.add_cog(TopGG(bot))
+
+if 'TOP_GG_TOKEN' in os.environ:
+    bot.add_cog(TopGG(bot))
 
 bot.run(os.environ['DISCORD_TOKEN'])

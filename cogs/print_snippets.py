@@ -110,11 +110,15 @@ class PrintSnippets(Cog):
             elif gl_match:
                 d = gl_match.groupdict()
                 await self.orig_to_encode(d)
+                headers = {}
+                if 'GITLAB_TOKEN' in os.environ:
+                    headers['PRIVATE-TOKEN'] = os.environ["GITLAB_TOKEN"]
                 async with aiohttp.ClientSession() as session:
                     file_contents = await self.fetch_http(
                         session,
                         f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}/raw?ref={d["branch"]}',
                         'text',
+                        headers=headers,
                     )
                 await self.revert_to_orig(d)
             elif bb_match:
