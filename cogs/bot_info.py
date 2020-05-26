@@ -11,6 +11,12 @@ from discord.ext.commands import Cog, command
 
 class BotInfo(Cog):
     def __init__(self, bot):
+        """
+        Sets the cog's bot
+
+        Also sets a custom prefix for commands if defined in .env
+        """
+
         self.bot = bot
         self.start_time = datetime.now()
 
@@ -20,17 +26,13 @@ class BotInfo(Cog):
 
     @command(aliases=['source'])
     async def github(self, ctx):
-        """
-        Sends the link to the bot's GitHub repo
-        """
+        """Sends the link to the bot's GitHub repo"""
 
         await ctx.send('https://github.com/dolphingarlic/git-the-lines')
 
     @command(aliases=['stats'])
     async def about(self, ctx):
-        """
-        Sends information about the bot
-        """
+        """Sends information about the bot"""
 
         info = await self.bot.application_info()
         embed = discord.Embed(
@@ -59,9 +61,7 @@ class BotInfo(Cog):
 
     @command()
     async def help(self, ctx):
-        """
-        Sends a help message
-        """
+        """Sends a help message"""
 
         embed = discord.Embed(
             title='Help',
@@ -91,27 +91,21 @@ class BotInfo(Cog):
 
         await ctx.send(embed=embed)
 
-    @command(aliases=['topgg'])
+    @command(aliases=['topgg', 'vote'])
     async def invite(self, ctx):
-        """
-        Sends a bot invite link
-        """
+        """Sends a bot invite link"""
 
         await ctx.send('https://top.gg/bot/708364985021104198')
 
     @command()
     async def ping(self, ctx):
-        """
-        Checks latency
-        """
+        """Checks latency"""
 
         await ctx.send(f'Pong; {round(self.bot.latency * 1000, 2)}ms')
 
     @Cog.listener()
     async def on_guild_join(self, guild):
-        """
-        Sends a nice message when added to a new server
-        """
+        """Sends a nice message when added to a new server"""
 
         embed = discord.Embed(
             title='Thanks for adding me to your server! :heart:',

@@ -1,5 +1,8 @@
 """
 Cog that prints out snippets to Discord
+
+Matches each message against a regex and prints the contents
+of the first matched snippet url
 """
 
 import os
@@ -33,12 +36,12 @@ BITBUCKET_RE = re.compile(
 
 class PrintSnippets(Cog):
     def __init__(self, bot):
+        """Initializes the cog's bot"""
+
         self.bot = bot
 
     async def fetch_http(self, session, url, format='text', **kwargs):
-        """
-        Uses aiohttp to make http GET requests
-        """
+        """Uses aiohttp to make http GET requests"""
 
         async with session.get(url, **kwargs) as response:
             if format == 'text':
@@ -47,17 +50,15 @@ class PrintSnippets(Cog):
                 return await response.json()
 
     async def revert_to_orig(self, d):
-        """
-        Replace URL Encoded values back to their original
-        """
+        """Replace URL Encoded values back to their original"""
+
         for obj in d:
             if d[obj] is not None:
                 d[obj] = d[obj].replace('%2F', '/').replace('%2E', '.')
 
     async def orig_to_encode(self, d):
-        """
-        Encode URL Parameters
-        """
+        """Encode URL Parameters"""
+
         for obj in d:
             if d[obj] is not None:
                 d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
@@ -167,7 +168,7 @@ class PrintSnippets(Cog):
             required = '\n'.join(required).rstrip().replace('`', r'\`')
 
             language = d['file_path'].split('/')[-1].split('.')[-1]
-            if not language.replace('-', '').replace('+', '').isalnum():
+            if not language.replace('-', '').replace('+', '').replace('_', '').isalnum():
                 language = ''
 
             if len(required) != 0:
