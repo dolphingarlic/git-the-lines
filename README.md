@@ -1,5 +1,6 @@
 # Git the lines
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/85bfb01083994b77b2d074f327fbfd8d)](https://app.codacy.com/manual/dolphingarlic/git-the-lines?utm_source=github.com&utm_medium=referral&utm_content=dolphingarlic/git-the-lines&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.com/dolphingarlic/git-the-lines.svg?branch=master)](https://travis-ci.com/dolphingarlic/git-the-lines)
 [![Up Status](https://top.gg/api/widget/status/708364985021104198.svg)](https://top.gg/bot/708364985021104198)
 [![Servers](https://top.gg/api/widget/servers/708364985021104198.svg)](https://top.gg/bot/708364985021104198)
