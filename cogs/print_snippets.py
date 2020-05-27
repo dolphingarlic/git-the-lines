@@ -34,34 +34,36 @@ BITBUCKET_RE = re.compile(
 )
 
 
+async def fetch_http(session, url, response_format='text', **kwargs):
+    """Uses aiohttp to make http GET requests"""
+
+    async with session.get(url, **kwargs) as response:
+        if response_format == 'text':
+            return await response.text()
+        elif response_format == 'json':
+            return await response.json()
+
+async def revert_to_orig(d):
+    """Replace URL Encoded values back to their original"""
+
+    for obj in d:
+        if d[obj] is not None:
+            d[obj] = d[obj].replace('%2F', '/').replace('%2E', '.')
+
+async def orig_to_encode(d):
+    """Encode URL Parameters"""
+
+    for obj in d:
+        if d[obj] is not None:
+            d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
+
+
 class PrintSnippets(Cog):
     def __init__(self, bot):
         """Initializes the cog's bot"""
 
         self.bot = bot
 
-    async def fetch_http(self, session, url, response_format='text', **kwargs):
-        """Uses aiohttp to make http GET requests"""
-
-        async with session.get(url, **kwargs) as response:
-            if response_format == 'text':
-                return await response.text()
-            elif response_format == 'json':
-                return await response.json()
-
-    async def revert_to_orig(self, d):
-        """Replace URL Encoded values back to their original"""
-
-        for obj in d:
-            if d[obj] is not None:
-                d[obj] = d[obj].replace('%2F', '/').replace('%2E', '.')
-
-    async def orig_to_encode(self, d):
-        """Encode URL Parameters"""
-
-        for obj in d:
-            if d[obj] is not None:
-                d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
 
     @Cog.listener()
     async def on_message(self, message):
@@ -81,7 +83,7 @@ class PrintSnippets(Cog):
                 if 'GITHUB_TOKEN' in os.environ:
                     headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
                 async with aiohttp.ClientSession() as session:
-                    file_contents = await self.fetch_http(
+                    file_contents = await fetch_http(
                         session,
                         f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}?ref={d["branch"]}',
                         'text',
@@ -93,7 +95,7 @@ class PrintSnippets(Cog):
                 if 'GITHUB_TOKEN' in os.environ:
                     headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
                 async with aiohttp.ClientSession() as session:
-                    gist_json = await self.fetch_http(
+                    gist_json = await fetch_http(
                         session,
                         f'https://api.github.com/gists/{d["gist_id"]}{"/" + d["revision"] if len(d["revision"]) > 0 else ""}',
                         'json',
@@ -102,7 +104,7 @@ class PrintSnippets(Cog):
                     for f in gist_json['files']:
                         if d['file_path'] == f.lower().replace('.', '-'):
                             d['file_path'] = f
-                            file_contents = await self.fetch_http(
+                            file_contents = await fetch_http(
                                 session,
                                 gist_json['files'][f]['raw_url'],
                                 'text',
@@ -113,28 +115,28 @@ class PrintSnippets(Cog):
                         return None
             elif gl_match:
                 d = gl_match.groupdict()
-                await self.orig_to_encode(d)
+                await orig_to_encode(d)
                 headers = {}
                 if 'GITLAB_TOKEN' in os.environ:
                     headers['PRIVATE-TOKEN'] = os.environ["GITLAB_TOKEN"]
                 async with aiohttp.ClientSession() as session:
-                    file_contents = await self.fetch_http(
+                    file_contents = await fetch_http(
                         session,
                         f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}/raw?ref={d["branch"]}',
                         'text',
                         headers=headers,
                     )
-                await self.revert_to_orig(d)
+                await revert_to_orig(d)
             elif bb_match:
                 d = bb_match.groupdict()
-                await self.orig_to_encode(d)
+                await orig_to_encode(d)
                 async with aiohttp.ClientSession() as session:
-                    file_contents = await self.fetch_http(
+                    file_contents = await fetch_http(
                         session,
                         f'https://bitbucket.org/{d["repo"]}/raw/{d["branch"]}/{d["file_path"]}',
                         'text',
                     )
-                await self.revert_to_orig(d)
+                await revert_to_orig(d)
 
             if d['end_line']:
                 start_line = int(d['start_line'])
