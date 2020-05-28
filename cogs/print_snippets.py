@@ -7,6 +7,7 @@ of the first matched snippet url
 
 import os
 import re
+import textwrap
 
 import aiohttp
 from discord.ext.commands import Cog
@@ -159,15 +160,8 @@ class PrintSnippets(Cog):
                 )
                 return None
 
-            required = list(map(lambda x: x.replace('\t', '    '),
-                                split_file_contents[start_line - 1:end_line]))
-
-            while all(line.startswith(' ') or len(line) == 0 for line in required):
-                required = list(map(lambda line: line[1:], required))
-                if all(len(line) == 0 for line in required):
-                    break
-
-            required = '\n'.join(required).rstrip().replace('`', r'\`')
+            required = '\n'.join(split_file_contents[start_line - 1:end_line])
+            required = textwrap.dedent(required).rstrip().replace('`', r'\`')
 
             language = d['file_path'].split('/')[-1].split('.')[-1]
             if not language.replace('-', '').replace('+', '').replace('_', '').isalnum():
