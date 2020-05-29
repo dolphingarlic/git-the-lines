@@ -1,8 +1,9 @@
-from discord.ext.commands import Bot
+import aiohttp
 import discord.ext.test as dpytest
 import pytest
 
 from cogs.print_snippets import PrintSnippets
+from discord.ext.commands import Bot
 
 
 @pytest.mark.asyncio
@@ -11,7 +12,7 @@ async def test_github():
 
     bot = Bot(command_prefix='.')
 
-    bot.add_cog(PrintSnippets(bot))
+    bot.add_cog(PrintSnippets(bot, aiohttp.ClientSession()))
 
     dpytest.configure(bot)
 
@@ -38,7 +39,7 @@ async def test_github_gists():
 
     bot = Bot(command_prefix='.')
 
-    bot.add_cog(PrintSnippets(bot))
+    bot.add_cog(PrintSnippets(bot, aiohttp.ClientSession()))
 
     dpytest.configure(bot)
 
@@ -65,7 +66,7 @@ async def test_gitlab():
 
     bot = Bot(command_prefix='.')
 
-    bot.add_cog(PrintSnippets(bot))
+    bot.add_cog(PrintSnippets(bot, aiohttp.ClientSession()))
 
     dpytest.configure(bot)
 
@@ -95,7 +96,7 @@ async def test_bitbucket():
 
     bot = Bot(command_prefix='.')
 
-    bot.add_cog(PrintSnippets(bot))
+    bot.add_cog(PrintSnippets(bot, aiohttp.ClientSession()))
 
     dpytest.configure(bot)
 
