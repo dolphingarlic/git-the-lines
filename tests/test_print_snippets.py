@@ -6,13 +6,20 @@ from cogs.print_snippets import PrintSnippets
 from discord.ext.commands import Bot
 
 
+@pytest.fixture(scope="function")
+async def bot():
+    """Fixture for creating a bot"""
+
+    async with aiohttp.ClientSession() as session:
+        bot = Bot(command_prefix='.')
+        bot.add_cog(PrintSnippets(bot, session))
+
+        yield bot
+
+
 @pytest.mark.asyncio
-async def test_github():
+async def test_github(bot):
     """Tests printing GitHub snippets"""
-
-    bot = Bot(command_prefix='.')
-
-    bot.add_cog(PrintSnippets(bot, aiohttp.ClientSession()))
 
     dpytest.configure(bot)
 
@@ -34,12 +41,8 @@ async def test_github():
 
 
 @pytest.mark.asyncio
-async def test_github_gists():
+async def test_github_gists(bot):
     """Tests printing GitHub Gist snippets"""
-
-    bot = Bot(command_prefix='.')
-
-    bot.add_cog(PrintSnippets(bot, aiohttp.ClientSession()))
 
     dpytest.configure(bot)
 
@@ -61,12 +64,8 @@ async def test_github_gists():
 
 
 @pytest.mark.asyncio
-async def test_gitlab():
+async def test_gitlab(bot):
     """Tests printing GitLab snippets"""
-
-    bot = Bot(command_prefix='.')
-
-    bot.add_cog(PrintSnippets(bot, aiohttp.ClientSession()))
 
     dpytest.configure(bot)
 
@@ -91,12 +90,8 @@ async def test_gitlab():
 
 
 @pytest.mark.asyncio
-async def test_bitbucket():
+async def test_bitbucket(bot):
     """Tests printing BitBucket snippets"""
-
-    bot = Bot(command_prefix='.')
-
-    bot.add_cog(PrintSnippets(bot, aiohttp.ClientSession()))
 
     dpytest.configure(bot)
 
