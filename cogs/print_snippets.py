@@ -92,24 +92,15 @@ class PrintSnippets(Cog):
                 )
             elif gh_gist_match:
                 d = gh_gist_match.groupdict()
-                headers = {'Accept': 'application/vnd.github.v3.raw'}
-                if 'GITHUB_TOKEN' in os.environ:
-                    headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
                 gist_json = await fetch_http(
                     self.session,
-                    f'https://api.github.com/gists/{d["gist_id"]}{"/" + d["revision"] if len(d["revision"]) > 0 else ""}',
+                    f'https://api.github.com/gists/{d["gist_id"]}{"/" + d["revision"] if d["revision"] else ""}',
                     'json',
-                    headers=headers,
                 )
                 for f in gist_json['files']:
                     if d['file_path'] == f.lower().replace('.', '-'):
                         d['file_path'] = f
-                        file_contents = await fetch_http(
-                            self.session,
-                            gist_json['files'][f]['raw_url'],
-                            'text',
-                            headers=headers,
-                        )
+                        file_contents = gist_json['files'][f]['content']
                         break
                 else:
                     return None
