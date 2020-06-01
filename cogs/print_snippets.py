@@ -78,7 +78,7 @@ class PrintSnippets(Cog):
         gh_gist_match = GITHUB_GIST_RE.search(message.content)
         gl_match = GITLAB_RE.search(message.content)
         bb_match = BITBUCKET_RE.search(message.content)
-        if (gh_match or gh_gist_match or gl_match or bb_match) and message.author.id != self.bot.user.id:
+        if (gh_match or gh_gist_match or gl_match or bb_match) and not message.author.bot:
             if gh_match:
                 d = gh_match.groupdict()
                 headers = {'Accept': 'application/vnd.github.v3.raw'}
