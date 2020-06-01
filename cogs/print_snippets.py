@@ -153,7 +153,7 @@ class PrintSnippets(Cog):
                 return None
 
             required = '\n'.join(split_file_contents[start_line - 1:end_line])
-            required = textwrap.dedent(required).rstrip().replace('`', r'\`')
+            required = textwrap.dedent(required).rstrip().replace('`', '`\u200b')
 
             language = d['file_path'].split('/')[-1].split('.')[-1]
             if not language.replace('-', '').replace('+', '').replace('_', '').isalnum():
