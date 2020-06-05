@@ -36,7 +36,7 @@ async def test_github(bot):
     dpytest.verify_message('```py\n"""\nGit the lines```')
     await dpytest.message('https://github.com/dolphingarlic/git-the-lines/blob/master/bot.py#L2-L1')
     dpytest.verify_message('```py\n"""\nGit the lines```')
-    await dpytest.message('https://github.com/dolphingarlic/git-the-lines/blob/master/bot.py#L0-L2')
+    await dpytest.message('https://github.com/dolphingarlic/git-the-lines/blob/master/bot.py#L0~L2')
     dpytest.verify_message('```py\n"""\nGit the lines```')
 
 
@@ -59,7 +59,7 @@ async def test_github_gists(bot):
     # Test multi-line snippet
     await dpytest.message('https://gist.github.com/dolphingarlic/9881f9bdd40d342338b2dc5d794f12d6#file-funkyname-test-cpp-L1-L3')
     dpytest.verify_message('```cpp\n#include <iostream>\n\nint main() {```')
-    await dpytest.message('https://gist.github.com/dolphingarlic/9881f9bdd40d342338b2dc5d794f12d6#file-funkyname-test-cpp-L3-L1')
+    await dpytest.message('https://gist.github.com/dolphingarlic/9881f9bdd40d342338b2dc5d794f12d6#file-funkyname-test-cpp-L3~L1')
     dpytest.verify_message('```cpp\n#include <iostream>\n\nint main() {```')
 
 
@@ -74,7 +74,7 @@ async def test_gitlab(bot):
     dpytest.verify_message('```py\nprint(help(str))\nprint(\'Hi\')```')
 
     # Test nested file
-    await dpytest.message('https://gitlab.com/dolphingarlic/bot-testing/-/blob/master/nested/file.py#L1-2')
+    await dpytest.message('https://gitlab.com/dolphingarlic/bot-testing/-/blob/master/nested/file.py#L1~2')
     dpytest.verify_message(
         '```py\nprint(\'Hey there!\')\nprint(\'Nice to see you\')```')
     await dpytest.message('https://gitlab.com/dolphingarlic/bot-testing/-/blob/master/nested/file.py#L1')

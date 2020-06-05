@@ -15,18 +15,18 @@ from discord.ext.commands import Cog
 
 GITHUB_RE = re.compile(
     r'https://github\.com/(?P<repo>.+)/blob/(?P<branch>.+?)/' +
-    r'(?P<file_path>.+)#L(?P<start_line>\d+)(-L(?P<end_line>\d+))?\b'
+    r'(?P<file_path>.+)#L(?P<start_line>\d+)([-~]L(?P<end_line>\d+))?\b'
 )
 
 GITHUB_GIST_RE = re.compile(
     r'https://gist\.github\.com/([^/]*)/(?P<gist_id>[0-9a-zA-Z]+)/*' +
     r'(?P<revision>[0-9a-zA-Z]*)/*#file-(?P<file_path>.+?)' +
-    r'-L(?P<start_line>\d+)(-L(?P<end_line>\d+))?\b'
+    r'-L(?P<start_line>\d+)([-~]L(?P<end_line>\d+))?\b'
 )
 
 GITLAB_RE = re.compile(
     r'https://gitlab\.com/(?P<repo>.+)/\-/blob/(?P<branch>.+?)/' +
-    r'(?P<file_path>.+)*#L(?P<start_line>\d+)(-(?P<end_line>\d+))?\b'
+    r'(?P<file_path>.+)*#L(?P<start_line>\d+)([-~](?P<end_line>\d+))?\b'
 )
 
 BITBUCKET_RE = re.compile(
