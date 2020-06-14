@@ -8,7 +8,6 @@ of the first matched snippet url
 import os
 import re
 
-import aiohttp
 from discord.ext.commands import Cog
 
 from cogs.utils import fetch_http, revert_to_orig, orig_to_encode, create_message
