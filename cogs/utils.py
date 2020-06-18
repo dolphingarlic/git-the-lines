@@ -46,9 +46,6 @@ async def create_message(d, file_contents):
     start_line = max(1, start_line)
     end_line = min(len(split_file_contents), end_line)
 
-    if end_line - start_line > 49:
-        return ''
-
     required = '\n'.join(split_file_contents[start_line - 1:end_line])
     required = textwrap.dedent(required).rstrip().replace('`', '`\u200b')
 

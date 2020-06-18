@@ -123,7 +123,11 @@ class PrintSnippets(Cog):
                 )
             elif len(message_to_send) == 0:
                 await message.channel.send(
-                    'Please send valid snippet links and limit your snippets to 50 lines to prevent spam :slight_smile:'
+                    'Please send valid snippet links to prevent spam :slight_smile:'
+                )
+            elif message_to_send.count('\n') > 50:
+                await message.channel.send(
+                    'Please limit the total number of lines to at most 50 to prevent spam :slight_smile:'
                 )
             else:
                 await message.channel.send(message_to_send)
