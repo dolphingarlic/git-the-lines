@@ -57,9 +57,8 @@ class RepoWidgets(Cog):
                     text=f'Language: {repo["language"]} | ' +
                          f'Stars: {repo["stargazers_count"]} | ' +
                          f'Forks: {repo["forks_count"]} | ' +
-                         f'Size: {repo["size"]}kb',
-                    icon_url=repo['owner']['avatar_url']
-                )
+                         f'Size: {repo["size"]}kb'
+                ).set_thumbnail(url=repo['owner']['avatar_url'])
                 await message.channel.send(embed=embed)
 
             await message.edit(suppress=True)
