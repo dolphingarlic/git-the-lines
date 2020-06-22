@@ -60,7 +60,7 @@ class RepoWidgets(Cog):
                          f'Size: {repo["size"]}kb'
                 ).set_thumbnail(url=repo['owner']['avatar_url'])
                 if repo['homepage']:
-                    embed.add_field(name='Homepage', value=repo['homepage'])
+                    embed.add_field(name='Website', value=repo['homepage'])
                 await message.channel.send(embed=embed)
 
             await message.edit(suppress=True)
