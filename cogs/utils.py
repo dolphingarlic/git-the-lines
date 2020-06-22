@@ -26,7 +26,7 @@ async def orig_to_encode(d):
             d[obj] = d[obj].replace('/', '%2F').replace('.', '%2E')
 
 
-async def create_message(d, file_contents):
+async def snippet_to_embed(d, file_contents):
     """
     Given a regex groupdict and file contents, creates a code block
     """

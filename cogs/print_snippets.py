@@ -10,7 +10,7 @@ import re
 
 from discord.ext.commands import Cog
 
-from cogs.utils import fetch_http, revert_to_orig, orig_to_encode, create_message
+from cogs.utils import fetch_http, revert_to_orig, orig_to_encode, snippet_to_embed
 
 
 GITHUB_RE = re.compile(
@@ -68,7 +68,7 @@ class PrintSnippets(Cog):
                     'text',
                     headers=headers,
                 )
-                message_to_send += await create_message(d, file_contents)
+                message_to_send += await snippet_to_embed(d, file_contents)
 
             for gh_gist in GITHUB_GIST_RE.finditer(message.content):
                 d = gh_gist.groupdict()
@@ -85,7 +85,7 @@ class PrintSnippets(Cog):
                             gist_json['files'][f]['raw_url'],
                             'text',
                         )
-                        message_to_send += await create_message(d, file_contents)
+                        message_to_send += await snippet_to_embed(d, file_contents)
                         break
 
             for gl in GITLAB_RE.finditer(message.content):
@@ -101,7 +101,7 @@ class PrintSnippets(Cog):
                     headers=headers,
                 )
                 await revert_to_orig(d)
-                message_to_send += await create_message(d, file_contents)
+                message_to_send += await snippet_to_embed(d, file_contents)
 
             for bb in BITBUCKET_RE.finditer(message.content):
                 d = bb.groupdict()
@@ -112,7 +112,7 @@ class PrintSnippets(Cog):
                     'text',
                 )
                 await revert_to_orig(d)
-                message_to_send += await create_message(d, file_contents)
+                message_to_send += await snippet_to_embed(d, file_contents)
 
             message_to_send = message_to_send[:-1]
 
