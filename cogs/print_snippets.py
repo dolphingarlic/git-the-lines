@@ -10,12 +10,12 @@ import re
 
 from discord.ext.commands import Cog
 
-from cogs.utils import fetch_http, revert_to_orig, orig_to_encode, snippet_to_embed
+from cogs.utils import fetch_http, fetch_github_snippet, revert_to_orig, orig_to_encode, snippet_to_embed
 
 
 GITHUB_RE = re.compile(
-    r'https://github\.com/(?P<repo>.+?)/blob/(?P<branch>.+?)/' +
-    r'(?P<file_path>.+?)#L(?P<start_line>\d+)([-~]L(?P<end_line>\d+))?\b'
+    r'https://github\.com/(?P<repo>.+?)/blob/(?P<path>.+/.+)' +
+    r'#L(?P<start_line>\d+)([-~]L(?P<end_line>\d+))?\b'
 )
 
 GITHUB_GIST_RE = re.compile(
@@ -58,17 +58,7 @@ class PrintSnippets(Cog):
             message_to_send = ''
 
             for gh in GITHUB_RE.finditer(message.content):
-                d = gh.groupdict()
-                headers = {'Accept': 'application/vnd.github.v3.raw'}
-                if 'GITHUB_TOKEN' in os.environ:
-                    headers['Authorization'] = f'token {os.environ["GITHUB_TOKEN"]}'
-                file_contents = await fetch_http(
-                    self.session,
-                    f'https://api.github.com/repos/{d["repo"]}/contents/{d["file_path"]}?ref={d["branch"]}',
-                    'text',
-                    headers=headers,
-                )
-                message_to_send += await snippet_to_embed(d, file_contents)
+                message_to_send += await fetch_github_snippet(self.session, **gh.groupdict())
 
             for gh_gist in GITHUB_GIST_RE.finditer(message.content):
                 d = gh_gist.groupdict()

@@ -1,4 +1,6 @@
+import os
 import textwrap
+
 
 async def fetch_http(session, url, response_format='text', **kwargs):
     """Uses aiohttp to make http GET requests"""
@@ -8,6 +10,32 @@ async def fetch_http(session, url, response_format='text', **kwargs):
             return await response.text()
         elif response_format == 'json':
             return await response.json()
+
+
+async def fetch_github_snippet(session, repo, path, start_line, end_line):
+    headers = {"Accept": "application/vnd.github.v3.raw"}
+    if "GITHUB_TOKEN" in os.environ:
+        headers["Authorization"] = f'token {os.environ["GITHUB_TOKEN"]}'
+
+    refs = (await fetch_http(session, f"https://api.github.com/repos/{repo}/branches", "json", headers=headers) +
+            await fetch_http(session, f"https://api.github.com/repos/{repo}/tags", "json", headers=headers))
+
+    ref = path.split("/")[0]
+    file_path = "/".join(path.split("/")[1:])
+    for possible_ref in refs:
+        if path.startswith(possible_ref["name"] + "/"):
+            ref = possible_ref["name"]
+            file_path = path[len(ref) + 1:]
+            break
+
+    url = f"https://api.github.com/repos/{repo}/contents/{file_path}?ref={ref}"
+    file_contents = await fetch_http(session, url, "text", headers=headers)
+
+    return await snippet_to_embed({
+        "file_path": file_path,
+        "start_line": start_line,
+        "end_line": end_line,
+    }, file_contents)
 
 
 async def revert_to_orig(d):
