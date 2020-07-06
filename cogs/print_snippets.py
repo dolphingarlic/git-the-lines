@@ -5,13 +5,12 @@ Matches each message against a regex and prints the contents
 of the first matched snippet url
 """
 
-import os
 import re
 
 from discord.ext.commands import Cog
 
-from cogs.utils import (fetch_github_snippet, fetch_gitlab_snippet, fetch_http,
-                        orig_to_encode, revert_to_orig, snippet_to_embed)
+from cogs.utils import (fetch_bitbucket_snippet, fetch_github_gist_snippet,
+                        fetch_github_snippet, fetch_gitlab_snippet)
 
 GITHUB_RE = re.compile(
     r'https://github\.com/(?P<repo>.+?)/blob/(?P<path>.+/.+)' +
@@ -30,7 +29,7 @@ GITLAB_RE = re.compile(
 )
 
 BITBUCKET_RE = re.compile(
-    r'https://bitbucket\.org/(?P<repo>.+?)/src/(?P<branch>.+?)/' +
+    r'https://bitbucket\.org/(?P<repo>.+?)/src/(?P<ref>.+?)/' +
     r'(?P<file_path>.+?)#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?\b'
 )
 
@@ -61,36 +60,13 @@ class PrintSnippets(Cog):
                 message_to_send += await fetch_github_snippet(self.session, **gh.groupdict())
 
             for gh_gist in GITHUB_GIST_RE.finditer(message.content):
-                d = gh_gist.groupdict()
-                gist_json = await fetch_http(
-                    self.session,
-                    f'https://api.github.com/gists/{d["gist_id"]}{"/" + d["revision"] if len(d["revision"]) > 0 else ""}',
-                    'json',
-                )
-                for f in gist_json['files']:
-                    if d['file_path'] == f.lower().replace('.', '-'):
-                        d['file_path'] = f
-                        file_contents = await fetch_http(
-                            self.session,
-                            gist_json['files'][f]['raw_url'],
-                            'text',
-                        )
-                        message_to_send += await snippet_to_embed(d, file_contents)
-                        break
+                message_to_send += await fetch_github_gist_snippet(self.session, **gh_gist.groupdict())
 
             for gl in GITLAB_RE.finditer(message.content):
                 message_to_send += await fetch_gitlab_snippet(self.session, **gl.groupdict())
 
             for bb in BITBUCKET_RE.finditer(message.content):
-                d = bb.groupdict()
-                await orig_to_encode(d)
-                file_contents = await fetch_http(
-                    self.session,
-                    f'https://bitbucket.org/{d["repo"]}/raw/{d["branch"]}/{d["file_path"]}',
-                    'text',
-                )
-                await revert_to_orig(d)
-                message_to_send += await snippet_to_embed(d, file_contents)
+                message_to_send += await fetch_bitbucket_snippet(self.session, **bb.groupdict())
 
             message_to_send = message_to_send[:-1]
 

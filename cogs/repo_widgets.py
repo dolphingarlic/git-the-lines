@@ -11,7 +11,7 @@ import re
 import discord
 from discord.ext.commands import Cog
 
-from cogs.utils import fetch_http, orig_to_encode
+from cogs.utils import fetch_http, encode
 
 
 GITHUB_RE = re.compile(
@@ -68,13 +68,12 @@ class RepoWidgets(Cog):
 
             for gl in GITLAB_RE.finditer(message.content):
                 d = gl.groupdict()
-                await orig_to_encode(d)
                 headers = {}
                 if 'GITLAB_TOKEN' in os.environ:
                     headers['PRIVATE-TOKEN'] = os.environ["GITLAB_TOKEN"]
                 repo = await fetch_http(
                     self.session,
-                    f'https://gitlab.com/api/v4/projects/{d["owner"]}%2F{d["repo"]}',
+                    f'https://gitlab.com/api/v4/projects/{encode(d["owner"])}%2F{encode(d["repo"])}',
                     'json',
                     headers=headers,
                 )
