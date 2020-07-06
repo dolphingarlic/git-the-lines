@@ -10,8 +10,8 @@ import re
 
 from discord.ext.commands import Cog
 
-from cogs.utils import fetch_http, fetch_github_snippet, revert_to_orig, orig_to_encode, snippet_to_embed
-
+from cogs.utils import (fetch_github_snippet, fetch_gitlab_snippet, fetch_http,
+                        orig_to_encode, revert_to_orig, snippet_to_embed)
 
 GITHUB_RE = re.compile(
     r'https://github\.com/(?P<repo>.+?)/blob/(?P<path>.+/.+)' +
@@ -25,8 +25,8 @@ GITHUB_GIST_RE = re.compile(
 )
 
 GITLAB_RE = re.compile(
-    r'https://gitlab\.com/(?P<repo>.+?)/\-/blob/(?P<branch>.+?)/' +
-    r'(?P<file_path>.+?)#L(?P<start_line>\d+)([-~](?P<end_line>\d+))?\b'
+    r'https://gitlab\.com/(?P<repo>.+?)/\-/blob/(?P<path>.+/.+)' +
+    r'#L(?P<start_line>\d+)([-~](?P<end_line>\d+))?\b'
 )
 
 BITBUCKET_RE = re.compile(
@@ -79,19 +79,7 @@ class PrintSnippets(Cog):
                         break
 
             for gl in GITLAB_RE.finditer(message.content):
-                d = gl.groupdict()
-                await orig_to_encode(d)
-                headers = {}
-                if 'GITLAB_TOKEN' in os.environ:
-                    headers['PRIVATE-TOKEN'] = os.environ["GITLAB_TOKEN"]
-                file_contents = await fetch_http(
-                    self.session,
-                    f'https://gitlab.com/api/v4/projects/{d["repo"]}/repository/files/{d["file_path"]}/raw?ref={d["branch"]}',
-                    'text',
-                    headers=headers,
-                )
-                await revert_to_orig(d)
-                message_to_send += await snippet_to_embed(d, file_contents)
+                message_to_send += await fetch_gitlab_snippet(self.session, **gl.groupdict())
 
             for bb in BITBUCKET_RE.finditer(message.content):
                 d = bb.groupdict()
