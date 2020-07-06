@@ -18,6 +18,8 @@ async def fetch_http(session, url, response_format="text", **kwargs):
 
 
 async def fetch_github_snippet(session, repo, path, start_line, end_line):
+    """Fetches a snippet from a github repo"""
+
     headers = {"Accept": "application/vnd.github.v3.raw"}
     if "GITHUB_TOKEN" in os.environ:
         headers["Authorization"] = f'token {os.environ["GITHUB_TOKEN"]}'
@@ -44,6 +46,8 @@ async def fetch_github_snippet(session, repo, path, start_line, end_line):
 
 
 async def fetch_github_gist_snippet(session, gist_id, revision, file_path, start_line, end_line):
+    """Fetches a snippet from a gist"""
+
     headers = {"Accept": "application/vnd.github.v3.raw"}
     if "GITHUB_TOKEN" in os.environ:
         headers["Authorization"] = f'token {os.environ["GITHUB_TOKEN"]}'
@@ -69,6 +73,8 @@ async def fetch_github_gist_snippet(session, gist_id, revision, file_path, start
 
 
 async def fetch_gitlab_snippet(session, repo, path, start_line, end_line):
+    """Fetches a snippet from a gitlab repo"""
+
     headers = {}
     if "GITLAB_TOKEN" in os.environ:
         headers["PRIVATE-TOKEN"] = os.environ["GITLAB_TOKEN"]
@@ -100,6 +106,8 @@ async def fetch_gitlab_snippet(session, repo, path, start_line, end_line):
 
 
 async def fetch_bitbucket_snippet(session, repo, ref, file_path, start_line, end_line):
+    """Fetches a snippet from a bitbucket repo"""
+
     file_contents = await fetch_http(
         session,
         f"https://bitbucket.org/{encode(repo)}/raw/{encode(ref)}/{encode(file_path)}",
@@ -110,7 +118,7 @@ async def fetch_bitbucket_snippet(session, repo, ref, file_path, start_line, end
 
 
 async def snippet_to_embed(file_contents, file_path, start_line, end_line):
-    """Given a regex groupdict and file contents, creates a code block"""
+    """Given file contents, file path, start line and end line creates a code block"""
 
     if end_line is None:
         start_line = end_line = int(start_line)
