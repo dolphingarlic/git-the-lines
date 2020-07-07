@@ -5,6 +5,7 @@ Matches each message against a regex and prints the contents
 of the first matched snippet url
 """
 
+import asyncio
 import re
 
 from discord.ext.commands import Cog
@@ -70,19 +71,17 @@ class PrintSnippets(Cog):
 
             message_to_send = message_to_send[:-1]
 
-            if len(message_to_send) > 2000:
-                await message.channel.send(
-                    'Sorry, Discord has a 2000 character limit. Please send a shorter ' +
-                    'snippet or split the big snippet up into several smaller ones :slight_smile:'
-                )
-            elif len(message_to_send) == 0:
-                await message.channel.send(
-                    'Please send valid snippet links to prevent spam :slight_smile:'
-                )
-            elif message_to_send.count('\n') > 50:
-                await message.channel.send(
-                    'Please limit the total number of lines to at most 50 to prevent spam :slight_smile:'
-                )
-            else:
-                await message.channel.send(message_to_send)
-            await message.edit(suppress=True)
+            if 0 < len(message_to_send) <= 2000 and message_to_send.count('\n') <= 50:
+                sent_message = await message.channel.send(message_to_send)
+                await message.edit(suppress=True)
+                await sent_message.add_reaction('❌')
+
+                def check(reaction, user):
+                    return user == message.author and str(reaction.emoji) == '❌'
+                
+                try:
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=10.0, check=check)
+                except asyncio.TimeoutError:
+                    await sent_message.remove_reaction('❌', self.bot.user)
+                else:
+                    await sent_message.delete()
