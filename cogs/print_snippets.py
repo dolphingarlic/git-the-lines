@@ -73,12 +73,13 @@ class PrintSnippets(Cog):
 
             if 0 < len(message_to_send) <= 2000 and message_to_send.count('\n') <= 50:
                 sent_message = await message.channel.send(message_to_send)
-                await message.edit(suppress=True)
+                if message.guild is not None:
+                    await message.edit(suppress=True)
                 await sent_message.add_reaction('❌')
 
                 def check(reaction, user):
                     return user == message.author and str(reaction.emoji) == '❌'
-                
+
                 try:
                     reaction, user = await self.bot.wait_for('reaction_add', timeout=10.0, check=check)
                 except asyncio.TimeoutError:
