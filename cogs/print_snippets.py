@@ -75,14 +75,14 @@ class PrintSnippets(Cog):
                 sent_message = await message.channel.send(message_to_send)
                 if message.guild is not None:
                     await message.edit(suppress=True)
-                await sent_message.add_reaction('❌')
+                await sent_message.add_reaction('🗑️')
 
                 def check(reaction, user):
-                    return user == message.author and str(reaction.emoji) == '❌'
+                    return user == message.author and str(reaction.emoji) == '🗑️'
 
                 try:
                     reaction, user = await self.bot.wait_for('reaction_add', timeout=10.0, check=check)
                 except asyncio.TimeoutError:
-                    await sent_message.remove_reaction('❌', self.bot.user)
+                    await sent_message.remove_reaction('🗑️', self.bot.user)
                 else:
                     await sent_message.delete()
