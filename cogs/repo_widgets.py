@@ -11,7 +11,7 @@ import re
 import discord
 from discord.ext.commands import Cog
 
-from cogs.utils import fetch_http, encode
+from cogs.utils import fetch_http
 
 
 GITHUB_RE = re.compile(
