@@ -2,7 +2,7 @@ import aiohttp
 import discord.ext.test as dpytest
 import pytest
 
-from cogs.print_snippets import PrintSnippets
+from cogs.code_snippets import CodeSnippets
 from discord.ext.commands import Bot
 
 
@@ -12,7 +12,7 @@ async def bot():
 
     async with aiohttp.ClientSession() as session:
         bot = Bot(command_prefix='.')
-        bot.add_cog(PrintSnippets(bot, session))
+        bot.add_cog(CodeSnippets(bot, session))
 
         yield bot
 
@@ -74,7 +74,7 @@ async def test_gitlab(bot):
     dpytest.verify_message('```py\nprint(help(str))\nprint(\'Hi\')```')
 
     # Test nested file
-    await dpytest.message('https://gitlab.com/dolphingarlic/bot-testing/-/blob/master/nested/file.py#L1~2')
+    await dpytest.message('https://gitlab.com/dolphingarlic/bot-testing/-/blob/master/nested/file.py#L1-2')
     dpytest.verify_message(
         '```py\nprint(\'Hey there!\')\nprint(\'Nice to see you\')```')
     await dpytest.message('https://gitlab.com/dolphingarlic/bot-testing/-/blob/master/nested/file.py#L1')

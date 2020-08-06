@@ -1,10 +1,6 @@
 import os
 import textwrap
-
-
-def encode(s):
-    """Encode URL Parameters"""
-    return s.replace("/", "%2F").replace(".", "%2E")
+from urllib.parse import quote_plus
 
 
 async def fetch_http(session, url, response_format="text", **kwargs):
@@ -79,7 +75,7 @@ async def fetch_gitlab_snippet(session, repo, path, start_line, end_line):
     if "GITLAB_TOKEN" in os.environ:
         headers["PRIVATE-TOKEN"] = os.environ["GITLAB_TOKEN"]
 
-    enc_repo = encode(repo)
+    enc_repo = quote_plus(repo)
 
     refs = (await fetch_http(session, f"https://gitlab.com/api/v4/projects/{enc_repo}/repository/branches", "json", headers=headers) +
             await fetch_http(session, f"https://gitlab.com/api/v4/projects/{enc_repo}/repository/tags", "json", headers=headers))
@@ -92,8 +88,8 @@ async def fetch_gitlab_snippet(session, repo, path, start_line, end_line):
             file_path = path[len(ref) + 1:]
             break
 
-    enc_ref = encode(ref)
-    enc_file_path = encode(file_path)
+    enc_ref = quote_plus(ref)
+    enc_file_path = quote_plus(file_path)
 
     file_contents = await fetch_http(
         session,
@@ -110,7 +106,7 @@ async def fetch_bitbucket_snippet(session, repo, ref, file_path, start_line, end
 
     file_contents = await fetch_http(
         session,
-        f"https://bitbucket.org/{encode(repo)}/raw/{encode(ref)}/{encode(file_path)}",
+        f"https://bitbucket.org/{quote_plus(repo)}/raw/{quote_plus(ref)}/{quote_plus(file_path)}",
         "text",
     )
 

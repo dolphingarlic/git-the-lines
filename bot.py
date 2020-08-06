@@ -15,7 +15,7 @@ from discord import Activity, ActivityType
 from discord.ext.commands import Bot, when_mentioned_or
 
 from cogs.bot_info import BotInfo
-from cogs.print_snippets import PrintSnippets
+from cogs.code_snippets import CodeSnippets
 from cogs.top_gg import TopGG
 from cogs.repo_widgets import RepoWidgets
 
@@ -33,7 +33,7 @@ async def main():
 
     async with aiohttp.ClientSession() as session:
         bot.add_cog(BotInfo(bot))
-        bot.add_cog(PrintSnippets(bot, session))
+        bot.add_cog(CodeSnippets(bot, session))
         bot.add_cog(RepoWidgets(bot, session))
 
         if 'TOP_GG_TOKEN' in os.environ:
