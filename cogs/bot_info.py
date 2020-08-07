@@ -89,7 +89,7 @@ class BotInfo(Cog):
             inline=True
         ).add_field(
             name='Bot support server',
-            value='Join the [https://discord.gg/mgBtqMK](bot support server) for additional help',
+            value='Join the [bot support server](https://discord.gg/mgBtqMK) for additional help',
             inline=False
         )
 
