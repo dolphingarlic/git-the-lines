@@ -87,6 +87,10 @@ class BotInfo(Cog):
             name=f'`{self.prefix}github` or `{self.prefix}source`',
             value='Links to the bot\'s GitHub repo',
             inline=True
+        ).add_field(
+            name='Bot support server',
+            value='Join the [https://discord.gg/mgBtqMK](bot support server) for additional help',
+            inline=False
         )
 
         await ctx.send(embed=embed)
