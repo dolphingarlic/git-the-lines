@@ -7,6 +7,7 @@ of the first matched snippet url
 
 import os
 import re
+from urllib.parse import quote_plus
 
 import discord
 from discord.ext.commands import Cog
@@ -73,7 +74,7 @@ class RepoWidgets(Cog):
                     headers['PRIVATE-TOKEN'] = os.environ["GITLAB_TOKEN"]
                 repo = await fetch_http(
                     self.session,
-                    f'https://gitlab.com/api/v4/projects/{encode(d["owner"])}%2F{encode(d["repo"])}',
+                    f'https://gitlab.com/api/v4/projects/{quote_plus(d["owner"])}%2F{quote_plus(d["repo"])}',
                     'json',
                     headers=headers,
                 )
