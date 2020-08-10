@@ -1,0 +1,28 @@
+{
+  "name": "Git the lines",
+  "description": "A Discord bot that prints out the lines referenced in a GitHub, GitLab, or BitBucket snippet link",
+  "repository": "https://github.com/dolphingarlic/git-the-lines",
+  "env": {
+    "BOT_PREFIX": {
+      "description": "Bot prefix",
+      "required": false
+    },
+    "DISCORD_TOKEN": {
+      "description": "Discord token",
+      "required": true
+   },
+    "GITHUB_TOKEN": {
+      "description": "Github token",
+      "required": false
+    },
+    "GITLAB_TOKEN": {
+      "description": "Gitlab token",
+      "required": false
+    },
+    "TOP_GG_TOKEN": {
+      "description": "Top.gg token",
+      "required": false
+    }
+  },
+  "keywords": ["bitbucket", "bot", "discord", "git", "github", "gitlab", "python"]
+}

@@ -66,6 +66,8 @@ Action: Sends the bot GitHub repo link
 
 [Use this link](https://top.gg/bot/708364985021104198) to add the bot to your server
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 Alternatively, you can self-host the bot using Heroku, pythonanywhere, or any other hosting service. Simply create a file named `.env` and set `DISCORD_TOKEN` to your Discord bot token
 
 ## Contribute
