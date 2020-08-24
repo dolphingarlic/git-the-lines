@@ -39,6 +39,10 @@ async def test_github(bot):
     await dpytest.message('https://github.com/dolphingarlic/git-the-lines/blob/master/bot.py#L0~L2')
     dpytest.verify_message('```py\n"""\nGit the lines```')
 
+    # Test no line range
+    await dpytest.message('https://github.com/dolphingarlic/git-the-lines/blob/master/Procfile')
+    dpytest.verify_message('```Procfile\nworker: python bot.py```')
+
 
 @pytest.mark.asyncio
 async def test_github_gists(bot):
@@ -87,6 +91,10 @@ async def test_gitlab(bot):
     # Test no file extension
     await dpytest.message('https://gitlab.com/dolphingarlic/bot-testing/-/blob/master/nested/fi.l/ee#L1')
     dpytest.verify_message('```ee\nMinu nimi on Andi```')
+
+    # Test no line range
+    await dpytest.message('https://gitlab.com/dolphingarlic/bot-testing/-/blob/master/nested/fi.l/e.py')
+    dpytest.verify_message('```py\nprint(\'Hi\')\nprint(1 + 3)```')
 
 
 @pytest.mark.asyncio
