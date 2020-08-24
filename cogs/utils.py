@@ -116,13 +116,15 @@ async def fetch_bitbucket_snippet(session, repo, ref, file_path, start_line, end
 async def snippet_to_embed(file_contents, file_path, start_line, end_line):
     """Given file contents, file path, start line and end line creates a code block"""
 
-    if end_line is None:
+    split_file_contents = file_contents.splitlines()
+
+    if start_line is None:
+        start_line, end_line = 1, len(split_file_contents)
+    elif end_line is None:
         start_line = end_line = int(start_line)
     else:
         start_line = int(start_line)
         end_line = int(end_line)
-
-    split_file_contents = file_contents.splitlines()
 
     if start_line > end_line:
         start_line, end_line = end_line, start_line
