@@ -51,7 +51,7 @@ class CommitWidgets(Cog):
                 embed = discord.Embed(
                     title=f'commit `{commit["sha"]}`',
                     description=commit['commit']['message'],
-                    url=commit['url'],
+                    url=commit['html_url'],
                     timestamp=datetime.datetime.fromisoformat(commit['commit']['author']['date'][:-1]),
                     color=0x111111
                 ).set_author(
