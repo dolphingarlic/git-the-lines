@@ -8,7 +8,6 @@ of the first matched snippet url
 import datetime
 import os
 import re
-from urllib.parse import quote_plus
 
 import discord
 from discord.ext.commands import Cog
@@ -16,7 +15,10 @@ from discord.ext.commands import Cog
 from cogs.utils import fetch_http
 
 
-GITHUB_RE = re.compile(r'https://github\.com/(?P<owner>[^/\s]+)/(?P<repo>[^/\s]+)/commit/(?P<commit>[^/\s]+)')
+GITHUB_RE = re.compile(
+    r'https://github\.com/(?P<owner>[^/\s]+)/(?P<repo>[^/\s]+)/commit/'
+    r'(?P<commit>[^/\s]+)'
+)
 
 
 class CommitWidgets(Cog):
@@ -52,7 +54,9 @@ class CommitWidgets(Cog):
                     title=f'commit `{commit["sha"]}`',
                     description=commit['commit']['message'],
                     url=commit['html_url'],
-                    timestamp=datetime.datetime.fromisoformat(commit['commit']['author']['date'][:-1]),
+                    timestamp=datetime.datetime.fromisoformat(
+                        commit['commit']['author']['date'][:-1]
+                    ),
                     color=0x111111
                 ).set_author(
                     name=f'{d["owner"]}/{d["repo"]}',
