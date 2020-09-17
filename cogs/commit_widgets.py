@@ -31,7 +31,7 @@ class CommitWidgets(Cog):
     @Cog.listener()
     async def on_message(self, message):
         """
-        Checks if the message starts is a GitHub repo link, then removes the embed,
+        Checks if the message contains is a commit link, then removes the embed,
         then sends a rich embed to Discord
         """
 
