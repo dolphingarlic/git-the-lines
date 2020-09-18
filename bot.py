@@ -19,6 +19,7 @@ from cogs.code_snippets import CodeSnippets
 from cogs.top_gg import TopGG
 from cogs.repo_widgets import RepoWidgets
 from cogs.commit_widgets import CommitWidgets
+from cogs.pull_request_widgets import PullRequestWidgets
 
 
 async def main():
@@ -37,6 +38,7 @@ async def main():
         bot.add_cog(CodeSnippets(bot, session))
         bot.add_cog(RepoWidgets(bot, session))
         bot.add_cog(CommitWidgets(bot, session))
+        bot.add_cog(PullRequestWidgets(bot, session))
 
         if 'TOP_GG_TOKEN' in os.environ:
             bot.add_cog(TopGG(bot))
