@@ -53,6 +53,12 @@ class PullRequestWidgets(Cog):
                 if len(body) > 512:
                     body = body[:512] + "..."
 
+                state = pull_request['state'].capitalize()
+                if pull_request['draft']:
+                    state = 'Draft'
+                if pull_request['merged']:
+                    state = 'Merged'
+
                 embed = discord.Embed(
                     title=f'{pull_request["title"]} (#{pull_request["number"]})',
                     description=body,
@@ -64,7 +70,7 @@ class PullRequestWidgets(Cog):
                     url=f'https://github.com/{d["owner"]}/{d["repo"]}',
                 ).add_field(
                     name="Status",
-                    value='Merged' if pull_request['merged'] else pull_request['state'].capitalize(),
+                    value=state,
                     inline=True,
                 ).add_field(
                     name="Additions",
