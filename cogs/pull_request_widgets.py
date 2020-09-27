@@ -14,6 +14,13 @@ from discord.ext.commands import Cog
 
 from cogs.utils import fetch_http
 
+COLORS = {
+    "Closed": 0xd73a49,
+    "Draft": 0x6a737d,
+    "Merged": 0x6f42c1,
+    "Open": 0x28a745,
+}
+
 GITHUB_RE = re.compile(
     r'https://github\.com/(?P<owner>[^/\s]+)/(?P<repo>[^/\s]+)/pull/'
     r'(?P<pr>[^/\s]+)')
@@ -53,18 +60,24 @@ class PullRequestWidgets(Cog):
                 if len(body) > 512:
                     body = body[:512] + "..."
 
+                state = pull_request['state'].capitalize()
+                if pull_request['draft']:
+                    state = 'Draft'
+                if pull_request['merged']:
+                    state = 'Merged'
+
                 embed = discord.Embed(
                     title=f'{pull_request["title"]} (#{pull_request["number"]})',
                     description=body,
                     url=pull_request['html_url'],
                     timestamp=datetime.datetime.fromisoformat(pull_request['created_at'][:-1]),
-                    color=0x111111,
+                    color=COLORS[state],
                 ).set_author(
                     name=f'{d["owner"]}/{d["repo"]}',
                     url=f'https://github.com/{d["owner"]}/{d["repo"]}',
                 ).add_field(
                     name="Status",
-                    value='Merged' if pull_request['merged'] else pull_request['state'].capitalize(),
+                    value=state,
                     inline=True,
                 ).add_field(
                     name="Additions",
