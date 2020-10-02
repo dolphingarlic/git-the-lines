@@ -17,12 +17,19 @@ Just send the link to the snippet - no need for extra commands! Git the lines ev
 ### Features
 
 - GitHub
-  - Public repos and gists
-  - Private repos and gists (if self-hosting)
+  - Public repos
+  - Private repos*
+  - gists
+  - commits
+  - pull requests
 - GitLab
   - Public repos
+  - Private repos*
+  - commits
 - BitBucket
   - Public repos
+
+<sub>*Private repos are only supported if self-hosted</sub>
 
 ## Commands
 
