@@ -5,13 +5,12 @@ Matches each message against a regex and prints the contents
 of the first matched snippet url
 """
 
-import asyncio
 import re
 
 from discord.ext.commands import Cog
 
 from cogs.utils import (fetch_bitbucket_snippet, fetch_github_gist_snippet,
-                        fetch_github_snippet, fetch_gitlab_snippet)
+                        fetch_github_snippet, fetch_gitlab_snippet, wait_for_deletion)
 
 GITHUB_RE = re.compile(
     r'https://github\.com/(?P<repo>\S+?)/blob/(?P<path>\S+/[^\s#]+)'
@@ -73,17 +72,4 @@ class CodeSnippets(Cog):
             message_to_send = message_to_send[:-1]
 
             if 0 < len(message_to_send) <= 2000 and message_to_send.count('\n') <= 50:
-                sent_message = await message.channel.send(message_to_send)
-                if message.guild is not None:
-                    await message.edit(suppress=True)
-                await sent_message.add_reaction('🗑️')
-
-                def check(reaction, user):
-                    return user == message.author and str(reaction.emoji) == '🗑️'
-
-                try:
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=10.0, check=check)
-                except asyncio.TimeoutError:
-                    await sent_message.remove_reaction('🗑️', self.bot.user)
-                else:
-                    await sent_message.delete()
+                await wait_for_deletion(message, self.bot, message_to_send)

@@ -12,7 +12,7 @@ import re
 import discord
 from discord.ext.commands import Cog
 
-from cogs.utils import fetch_http
+from cogs.utils import fetch_http, wait_for_deletion
 
 COLORS = {
     "Closed": 0xd73a49,
@@ -113,6 +113,6 @@ class PullRequestWidgets(Cog):
                         inline=True,
                     )
 
-                await message.channel.send(embed=embed)
+                await wait_for_deletion(message, self.bot, embed, True)
 
             await message.edit(suppress=True)
