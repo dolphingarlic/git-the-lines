@@ -12,7 +12,7 @@ from urllib.parse import quote_plus
 import discord
 from discord.ext.commands import Cog
 
-from cogs.utils import fetch_http
+from cogs.utils import fetch_http, wait_for_deletion
 
 
 GITHUB_RE = re.compile(
@@ -93,6 +93,6 @@ class RepoWidgets(Cog):
                 if repo['avatar_url'] is not None:
                     embed.set_thumbnail(url=repo['avatar_url'])
 
-                await message.channel.send(embed=embed)
+                await wait_for_deletion(message, self.bot, embed, True)
 
             await message.edit(suppress=True)

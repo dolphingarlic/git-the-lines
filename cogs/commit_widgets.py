@@ -5,6 +5,7 @@ Matches each message against a regex and prints the contents
 of the first matched snippet url
 """
 
+import asyncio
 import datetime
 import os
 import re
@@ -13,7 +14,7 @@ from urllib.parse import quote_plus
 import discord
 from discord.ext.commands import Cog
 
-from cogs.utils import fetch_http
+from cogs.utils import fetch_http, wait_for_deletion
 
 
 GITHUB_RE = re.compile(
@@ -126,6 +127,6 @@ class CommitWidgets(Cog):
                     text=f'{commit["author_name"]} committed',
                 )
 
-                await message.channel.send(embed=embed)
+                await wait_for_deletion(message, self.bot, embed, True)
 
             await message.edit(suppress=True)

@@ -1,3 +1,4 @@
+import asyncio
 import os
 import textwrap
 from urllib.parse import quote_plus
@@ -144,3 +145,23 @@ async def snippet_to_embed(file_contents, file_path, start_line, end_line):
     if len(required) != 0:
         return f"```{language}\n{required}```\n"
     return "``` ```\n"
+
+
+async def wait_for_deletion(message, bot, message_to_send, embed=False):
+    if embed:
+        sent_message = await message.channel.send(embed=message_to_send)
+    else:
+        sent_message = await message.channel.send(message_to_send)
+    if message.guild is not None:
+        await message.edit(suppress=True)
+    await sent_message.add_reaction('🗑️')
+
+    def check(reaction, user):
+        return user == message.author and str(reaction.emoji) == '🗑️'
+
+    try:
+        reaction, user = await bot.wait_for('reaction_add', timeout=10.0, check=check)
+    except asyncio.TimeoutError:
+        await sent_message.remove_reaction('🗑️', bot.user)
+    else:
+        await sent_message.delete()
