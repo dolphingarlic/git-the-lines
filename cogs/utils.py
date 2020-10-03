@@ -160,7 +160,7 @@ async def wait_for_deletion(message, bot, message_to_send, embed=False):
         return user == message.author and str(reaction.emoji) == '🗑️'
 
     try:
-        reaction, user = await bot.wait_for('reaction_add', timeout=10.0, check=check)
+        await bot.wait_for('reaction_add', timeout=10.0, check=check)
     except asyncio.TimeoutError:
         await sent_message.remove_reaction('🗑️', bot.user)
     else:

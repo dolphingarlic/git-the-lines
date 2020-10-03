@@ -5,7 +5,6 @@ Matches each message against a regex and prints the contents
 of the first matched snippet url
 """
 
-import asyncio
 import re
 
 from discord.ext.commands import Cog
