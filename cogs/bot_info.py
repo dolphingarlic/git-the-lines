@@ -44,10 +44,6 @@ class BotInfo(Cog):
             value=len(self.bot.guilds),
             inline=True
         ).add_field(
-            name='User Count',
-            value=len(self.bot.users),
-            inline=True
-        ).add_field(
             name='Uptime',
             value=f'{datetime.now() - self.start_time}',
             inline=True
