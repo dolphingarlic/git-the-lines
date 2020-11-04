@@ -147,8 +147,8 @@ async def snippet_to_embed(file_contents, file_path, start_line, end_line):
     else:
         ret = f'`{file_path}` lines {start_line} to {end_line}\n'
     if len(required) != 0:
-        return ret + f'```{language}\n{required}```\n'
-    return ret + f'``` ```\n'
+        return f'{ret}```{language}\n{required}```\n'
+    return f'{ret}``` ```\n'
 
 
 async def wait_for_deletion(message, bot, message_to_send, embed=False):
