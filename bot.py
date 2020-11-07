@@ -36,7 +36,7 @@ async def main():
     async with aiohttp.ClientSession() as session:
         bot.add_cog(BotInfo(bot))
         bot.add_cog(CodeSnippets(bot, session))
-        bot.add_cog(RepoWidgets(bot, session))
+        # bot.add_cog(RepoWidgets(bot, session))
         bot.add_cog(CommitWidgets(bot, session))
         bot.add_cog(PullRequestWidgets(bot, session))
 
