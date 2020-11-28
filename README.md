@@ -19,13 +19,13 @@ Just send the link to the snippet - no need for extra commands! Git the lines ev
 - GitHub
   - Public repos
   - Private repos*
-  - gists
-  - commits
-  - pull requests
+  - Gists
+  <!-- - commits
+  - pull requests -->
 - GitLab
   - Public repos
   - Private repos*
-  - commits
+  <!-- - commits -->
 - BitBucket
   - Public repos
 
