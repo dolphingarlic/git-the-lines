@@ -13,7 +13,7 @@ from cogs.utils import (fetch_bitbucket_snippet, fetch_github_gist_snippet,
                         fetch_github_snippet, fetch_gitlab_snippet, wait_for_deletion)
 
 GITHUB_RE = re.compile(
-    r'https://github\.com/(?P<repo>\S+?)/blob/(?P<path>\S+/[^\s#,]+)'
+    r'https://github\.com/(?P<repo>\S+?)/blob/(?P<path>\S+/[^\s#,>]+)'
     r'(#L(?P<start_line>\d+)([-~:]L(?P<end_line>\d+))?)?($|\s|,|>)'
 )
 
@@ -24,13 +24,13 @@ GITHUB_GIST_RE = re.compile(
 )
 
 GITLAB_RE = re.compile(
-    r'https://gitlab\.com/(?P<repo>\S+?)/\-/blob/(?P<path>\S+/[^\s#,]+)'
+    r'https://gitlab\.com/(?P<repo>\S+?)/\-/blob/(?P<path>\S+/[^\s#,>]+)'
     r'(#L(?P<start_line>\d+)([-](?P<end_line>\d+))?)?($|\s|,|>)'
 )
 
 BITBUCKET_RE = re.compile(
     r'https://bitbucket\.org/(?P<repo>\S+?)/src/'
-    r'(?P<ref>\S+?)/(?P<file_path>[^\s#,]+)'
+    r'(?P<ref>\S+?)/(?P<file_path>[^\s#,>]+)'
     r'(#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?)?($|\s|,|>)'
 )
 
