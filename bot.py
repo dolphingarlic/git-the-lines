@@ -17,9 +17,9 @@ from discord.ext.commands import Bot, when_mentioned_or
 from cogs.bot_info import BotInfo
 from cogs.code_snippets import CodeSnippets
 from cogs.top_gg import TopGG
-from cogs.repo_widgets import RepoWidgets
-from cogs.commit_widgets import CommitWidgets
-from cogs.pull_request_widgets import PullRequestWidgets
+# from cogs.repo_widgets import RepoWidgets
+# from cogs.commit_widgets import CommitWidgets
+# from cogs.pull_request_widgets import PullRequestWidgets
 
 
 async def main():
