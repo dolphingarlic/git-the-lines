@@ -13,27 +13,25 @@ from cogs.utils import (fetch_bitbucket_snippet, fetch_github_gist_snippet,
                         fetch_github_snippet, fetch_gitlab_snippet, wait_for_deletion)
 
 GITHUB_RE = re.compile(
-    r'https://github\.com/(?P<repo>\S+?)/blob/(?P<path>\S+/[^\s#,>]+)'
-    r'(#L(?P<start_line>\d+)([-~:]L(?P<end_line>\d+))?)?($|\s|,|>)'
+    r'https://github\.com/(?P<repo>[a-zA-Z0-9-]+/[\w.-]+)/blob/'
+    r'(?P<path>[^#>]+)(\?[^#>]+)?(#L(?P<start_line>\d+)([-~:]L(?P<end_line>\d+))?)'
 )
 
 GITHUB_GIST_RE = re.compile(
-    r'https://gist\.github\.com/([^/]+)/(?P<gist_id>[^\W_]+)/*'
-    r'(?P<revision>[^\W_]*)/*#file-(?P<file_path>\S+?)'
-    r'(-L(?P<start_line>\d+)([-~:]L(?P<end_line>\d+))?)?($|\s|,|>)'
+    r'https://gist\.github\.com/([a-zA-Z0-9-]+)/(?P<gist_id>[a-zA-Z0-9]+)/*'
+    r'(?P<revision>[a-zA-Z0-9]*)/*#file-(?P<file_path>[^#>]+?)(\?[^#>]+)?'
+    r'(-L(?P<start_line>\d+)([-~:]L(?P<end_line>\d+))?)'
 )
 
 GITLAB_RE = re.compile(
-    r'https://gitlab\.com/(?P<repo>\S+?)/\-/blob/(?P<path>\S+/[^\s#,>]+)'
-    r'(#L(?P<start_line>\d+)([-](?P<end_line>\d+))?)?($|\s|,|>)'
+    r'https://gitlab\.com/(?P<repo>[\w.-]+/[\w.-]+)/\-/blob/(?P<path>[^#>]+)'
+    r'(\?[^#>]+)?(#L(?P<start_line>\d+)(-(?P<end_line>\d+))?)'
 )
 
 BITBUCKET_RE = re.compile(
-    r'https://bitbucket\.org/(?P<repo>\S+?)/src/'
-    r'(?P<ref>\S+?)/(?P<file_path>[^\s#,>]+)'
-    r'(#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?)?($|\s|,|>)'
+    r'https://bitbucket\.org/(?P<repo>[a-zA-Z0-9-]+/[\w.-]+)/src/(?P<ref>[0-9a-zA-Z]+)'
+    r'/(?P<file_path>[^#>]+)(\?[^#>]+)?(#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?)'
 )
-
 
 class CodeSnippets(Cog):
     def __init__(self, bot, session):
