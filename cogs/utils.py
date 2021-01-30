@@ -138,7 +138,8 @@ async def snippet_to_embed(file_contents, file_path, start_line, end_line):
     required = '\n'.join(split_file_contents[start_line - 1:end_line])
     required = textwrap.dedent(required).rstrip().replace('`', '`\u200b')
 
-    language = file_path.rstrip('/').split('/')[-1].split('.')[-1]
+    file_path = file_path.rstrip('/') # Get rid of trailing slashes
+    language = file_path.split('/')[-1].split('.')[-1]
     if not language.replace('-', '').replace('+', '').replace('_', '').isalnum():
         language = ''
 
