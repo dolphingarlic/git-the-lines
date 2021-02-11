@@ -14,23 +14,23 @@ from cogs.utils import (fetch_bitbucket_snippet, fetch_github_gist_snippet,
 
 GITHUB_RE = re.compile(
     r'https://github\.com/(?P<repo>[a-zA-Z0-9-]+/[\w.-]+)/blob/'
-    r'(?P<path>[^#>]+)(\?[^#>]+)?(#L(?P<start_line>\d+)([-~:]L(?P<end_line>\d+))?)?'
+    r'(?P<path>[^#>\s]+)(\?[^#>\s]+)?(#L(?P<start_line>\d+)([-~:]L(?P<end_line>\d+))?)?'
 )
 
 GITHUB_GIST_RE = re.compile(
     r'https://gist\.github\.com/([a-zA-Z0-9-]+)/(?P<gist_id>[a-zA-Z0-9]+)/*'
-    r'(?P<revision>[a-zA-Z0-9]*)/*#file-(?P<file_path>[^#>]+?)(\?[^#>]+)?'
+    r'(?P<revision>[a-zA-Z0-9]*)/*#file-(?P<file_path>[^#>\s]+?)(\?[^#>\s]+)?'
     r'(-L(?P<start_line>\d+)([-~:]L(?P<end_line>\d+))?)'
 )
 
 GITLAB_RE = re.compile(
-    r'https://gitlab\.com/(?P<repo>[\w.-]+/[\w.-]+)/\-/blob/(?P<path>[^#>]+)'
-    r'(\?[^#>]+)?(#L(?P<start_line>\d+)(-(?P<end_line>\d+))?)?'
+    r'https://gitlab\.com/(?P<repo>[\w.-]+/[\w.-]+)/\-/blob/(?P<path>[^#>\s]+)'
+    r'(\?[^#>\s]+)?(#L(?P<start_line>\d+)(-(?P<end_line>\d+))?)?'
 )
 
 BITBUCKET_RE = re.compile(
     r'https://bitbucket\.org/(?P<repo>[a-zA-Z0-9-]+/[\w.-]+)/src/(?P<ref>[0-9a-zA-Z]+)'
-    r'/(?P<file_path>[^#>]+)(\?[^#>]+)?(#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?)?'
+    r'/(?P<file_path>[^#>\s]+)(\?[^#>\s]+)?(#lines-(?P<start_line>\d+)(:(?P<end_line>\d+))?)?'
 )
 
 class CodeSnippets(Cog):
