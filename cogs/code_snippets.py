@@ -70,4 +70,4 @@ class CodeSnippets(Cog):
 
             if 0 < len(message_to_send) <= 2000 and message_to_send.count('\n') <= 50:
                 # Trim the last \n character and send it to Discord
-                await wait_for_deletion(message[:-1], self.bot, message_to_send)
+                await wait_for_deletion(message, self.bot, message_to_send[:-1])
