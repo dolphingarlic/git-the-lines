@@ -35,8 +35,8 @@ BITBUCKET_RE = re.compile(
 )
 
 HEPTAPOD_RE = re.compile(
-    r'https://foss\.heptapod\.net/([a-zA-Z0-9-]+/[\w.-]+)/-/blob/'
-    r'([^#>]+)(\?[^#>]+)?(#L(\d+)([-~:](\d+))?)?'
+    r'https://foss\.heptapod\.net/(?P<repo>[a-zA-Z0-9-]+/[\w.-]+)/-/blob/'
+    r'(?P<file_path>[^#>]+)(\?[^#>]+)?(#L(?P<start_line>\d+)([-~:](?P<end_line>\d+))?)?'
 )
 
 class CodeSnippets(Cog):
