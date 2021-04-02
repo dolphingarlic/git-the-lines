@@ -35,7 +35,7 @@ BITBUCKET_RE = re.compile(
 )
 
 HEPTAPOD_RE = re.compile(
-    r'https://foss\.heptapod\.net/(?P<repo>[a-zA-Z0-9-]+/[\w.-]+)/-/blob/'
+    r'https://foss\.heptapod\.net/(?P<repo>[a-zA-Z0-9-]+/[\w.-]+)/-/blob/branch/'
     r'(?P<path>[^#>]+)(\?[^#>]+)?(#L(?P<start_line>\d+)([-~:](?P<end_line>\d+))?)?'
 )
 
