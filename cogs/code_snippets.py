@@ -45,7 +45,7 @@ class CodeSnippets(Cog):
 
         self.bot = bot
         self.session = session
-        
+
         self.pattern_handlers = [
             (GITHUB_RE, fetch_github_snippet),
             (GITHUB_GIST_RE, fetch_github_gist_snippet),
@@ -69,4 +69,5 @@ class CodeSnippets(Cog):
                     message_to_send += await handler(self.session, **match.groupdict())
 
             if 0 < len(message_to_send) <= 2000 and message_to_send.count('\n') <= 50:
-                await wait_for_deletion(message, self.bot, message_to_send)
+                # Trim the last \n character and send it to Discord
+                await wait_for_deletion(message[:-1], self.bot, message_to_send)
