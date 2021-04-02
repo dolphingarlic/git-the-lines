@@ -121,6 +121,7 @@ async def fetch_heptapod_snippet(session, repo, file_path, start_line, end_line)
         'text',
     )
 
+    file_path = '/'.join(path.split('/')[1:])
     return await snippet_to_embed(file_contents, file_path, start_line, end_line)
 
 
