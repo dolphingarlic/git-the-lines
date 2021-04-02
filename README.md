@@ -6,7 +6,7 @@
 [![Servers](https://top.gg/api/widget/servers/708364985021104198.svg)](https://top.gg/bot/708364985021104198)
 [![inviteme](https://img.shields.io/static/v1?style=flat&logo=discord&logoColor=FFF&label=&message=invite%20me&color=7289DA)](https://top.gg/bot/708364985021104198)
 
-A Discord bot that prints out the lines referenced in a GitHub or GitLab link
+A Discord bot that prints out the lines referenced in a Git snippet link (e.g. https://github.com/dolphingarlic/git-the-lines/blob/master/bot.py#L30-L34)
 
 ## Usage
 
@@ -27,6 +27,8 @@ Just send the link to the snippet - no need for extra commands! Git the lines ev
   - Private repos*
   <!-- - commits -->
 - BitBucket
+  - Public repos
+- Heptapod
   - Public repos
 
 <sub>*Private repos are only supported if self-hosted</sub>
