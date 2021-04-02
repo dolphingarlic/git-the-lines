@@ -117,7 +117,7 @@ async def fetch_bitbucket_snippet(session, repo, ref, file_path, start_line, end
 async def fetch_heptapod_snippet(session, repo, path, start_line, end_line):
     file_contents = await fetch_http(
         session,
-        f'https://https://foss.heptapod.net/{repo}/-/raw/branch/{path}',
+        f'https://foss.heptapod.net/{repo}/-/raw/branch/{path}',
         'text',
     )
 
