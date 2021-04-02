@@ -109,3 +109,17 @@ async def test_bitbucket(bot):
     # Test multi line
     await dpytest.message('https://bitbucket.org/avdg/ai-bot-js/src/197308c293b64151ef6ac1b7238051ed415a181b/MyBot.js#lines-1:2')
     dpytest.verify_message('`MyBot.js` lines 1 to 2\n```js\nvar stream = require("./lib/stream");\nvar util = require("util");```')
+
+@pytest.mark.asyncio
+async def test_heptapod(bot):
+    """Tests printing Heptapod snippets"""
+    
+    dpytest.configure(bot)
+    
+    # Test single line
+    await dpytest.message('https://foss.heptapod.net/pypy/pypy/-/blob/branch/py3.7/rpython/rtyper/lltypesystem/module/ll_math.py#L70')
+    dpytest.verify_message('`rpython/rtyper/lltypesystem/module/ll_math.py` line 70\n```py\nmath_floor = llexternal(\'floor\', [rffi.DOUBLE], rffi.DOUBLE, elidable_function=True)```')
+    
+    # Test multi line
+    await dpytest.message('https://foss.heptapod.net/pypy/pypy/-/blob/branch/py3.7/include/PyPy.h#L1-2')
+    dpytest.verify_message('`include/PyPy.h` lines 1 to 2\n```h\n#ifndef _PYPY_H_\n#define _PYPY_H_```')
