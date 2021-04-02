@@ -114,6 +114,16 @@ async def fetch_bitbucket_snippet(session, repo, ref, file_path, start_line, end
     return await snippet_to_embed(file_contents, file_path, start_line, end_line)
 
 
+async def fetch_heptapod_snippet(session, repo, file_path, start_line, end_line):
+    file_contents = await fetch_http(
+        session,
+        f'https://https://foss.heptapod.net/{repo}/-/raw/branch/{file_path}',
+        'text',
+    )
+
+    return await snippet_to_embed(file_contents, file_path, start_line, end_line)
+
+
 async def snippet_to_embed(file_contents, file_path, start_line, end_line):
     """Given file contents, file path, start line and end line creates a code block"""
 
