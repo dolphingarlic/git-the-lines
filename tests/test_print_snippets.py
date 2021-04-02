@@ -118,7 +118,7 @@ async def test_heptapod(bot):
     
     # Test single line
     await dpytest.message('https://foss.heptapod.net/pypy/pypy/-/blob/branch/py3.7/rpython/rtyper/lltypesystem/module/ll_math.py#L70')
-    dpytest.verify_message('`rpython/rtyper/lltypesystem/module/ll_math.py` line 70\n```py\nmath_floor = llexternal('floor', [rffi.DOUBLE], rffi.DOUBLE, elidable_function=True)```')
+    dpytest.verify_message('`rpython/rtyper/lltypesystem/module/ll_math.py` line 70\n```py\nmath_floor = llexternal(\'floor\', [rffi.DOUBLE], rffi.DOUBLE, elidable_function=True)```')
     
     # Test multi line
     await dpytest.message('https://foss.heptapod.net/pypy/pypy/-/blob/branch/py3.7/include/PyPy.h#L1-2')
